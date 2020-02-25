@@ -29,6 +29,7 @@ _C.UPDATE_TIMEOUT = 5.0
 _C.POSITION_RANGE = 255
 # scaling factor to convert from URScript range to Robotiq range
 _C.POSITION_SCALING = (255 / 0.7)
+_C.TCP_WRENCH_TOPIC = '/wrench'
 
 
 def get_robotiq2f140_cfg():

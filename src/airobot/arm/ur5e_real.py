@@ -19,6 +19,7 @@ from airobot.utils.arm_util import wait_to_reach_jnt_goal
 from airobot.utils.common import print_red
 from airobot.utils.moveit_util import moveit_cartesian_path
 from airobot.utils.ros_util import kdl_frame_to_numpy
+from airobot.utils.message_converter import convert_ros_message_to_dictionary
 from std_msgs.msg import String
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -65,6 +66,34 @@ class UR5eReal(SingleArmROS):
             self.set_comm_mode(use_urscript=False)
         self.is_jpos_in_good_range()
 
+        self._tcp_wrench = dict() # Tool center point wrench
+
+        if self.cfgs['HAS_EETOOL']:
+            rospy.Subscriber(self.cfgs.EETOOL.TCP_WRENCH_TOPIC,
+                         WrenchStamped,
+                         self._callback_tcp_wrench)
+            self._tcp_wrench_lock = threading.RLock()
+
+    def _callback_tcp_wrench(self, msg):
+        """
+
+        Args:
+            msg:
+
+        Returns:
+
+        """
+
+        self._tcp_wrench_lock.acquire()
+        self._tcp_wrench = convert_ros_message_to_dictionary(msg)
+        self._tcp_wrench_lock.release()
+
+    def get_tcp_wrench(self):
+        self._tcp_wrench_lock.acquire()
+        tcp_wrench = self._tcp_wrench.copy()
+        self._tcp_wrench_lock.release()
+        return tcp_wrench
+        
     def is_jpos_in_good_range(self):
         """
         Check if the joint angles lie in (-pi, pi].

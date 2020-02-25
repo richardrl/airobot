@@ -24,6 +24,5 @@ _C.CAM.CLASS = 'RGBDCamera'
 _C.EETOOL = get_robotiq2f140_cfg()
 _C.EETOOL.CLASS = 'Robotiq2F140'
 
-
 def get_cfg():
     return _C.clone()
