@@ -113,6 +113,6 @@ def read_cam_ext(robot_name):
                                    'calib_base_to_cam.json')
     with open(calib_file_path, 'r') as f:
         calib_data = json.load(f)
-    cam_pos = np.array(calib_data['b_c_transform']['position'])
-    cam_ori = np.array(calib_data['b_c_transform']['orientation'])
+    cam_pos = np.array(calib_data['base_from_camera_transform']['position'])
+    cam_ori = np.array(calib_data['base_from_camera_transform']['orientation'])
     return cam_pos, cam_ori

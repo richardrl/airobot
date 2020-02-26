@@ -119,10 +119,14 @@ class Robot:
             from .arm import cls_name_to_path as arm_cls_name_to_path
             arm_class = load_class_from_path(cls_name,
                                              arm_cls_name_to_path[cls_name])
-            if not use_eetool:
+            if use_eetool:
+                cfgs.HAS_EETOOL = True
+            else:
                 cfgs.HAS_EETOOL = False
             if cfgs.HAS_EETOOL:
                 cfgs.EETOOL.CLASS = cfgs.EETOOL.CLASS + class_suffix
+            # import pdb
+            # pdb.set_trace()
             arm_cfg['eetool_cfg'] = eetool_cfg
             self.arm = arm_class(cfgs, **arm_cfg)
         if cfgs.HAS_BASE and use_base:

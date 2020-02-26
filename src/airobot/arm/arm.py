@@ -21,11 +21,15 @@ class ARM(object):
 
     def __init__(self, cfgs, eetool_cfg=None):
         self.cfgs = cfgs
+        # import pdb
+        # pdb.set_trace()
         if cfgs.HAS_EETOOL:
             if eetool_cfg is None:
                 eetool_cfg = {}
             cls_name = cfgs.EETOOL.CLASS
             from airobot.ee_tool import cls_name_to_path as ee_cls_name_to_path
+            import pdb
+            pdb.set_trace()
             eetool_calss = load_class_from_path(cls_name,
                                                 ee_cls_name_to_path[cls_name])
             self.eetool = eetool_calss(cfgs, **eetool_cfg)

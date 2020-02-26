@@ -85,7 +85,7 @@ class SingleArmROS(SingleArmReal):
             if not isinstance(position, numbers.Number):
                 raise TypeError('position should be individual float value'
                                 ' if joint_name is provided')
-            if joint_name not in self.arm_jnt_names_set:
+            if joint_name not in self.arm_jnt_names:
                 raise TypeError('Joint name [%s] is not in the arm'
                                 ' joint list!' % joint_name)
             else:

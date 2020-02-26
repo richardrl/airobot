@@ -23,6 +23,7 @@ _C.CAM.CLASS = 'RGBDCamera'
 
 _C.EETOOL = get_robotiq2f140_cfg()
 _C.EETOOL.CLASS = 'Robotiq2F140'
+_C.EETOOL.TCP_WRENCH_TOPIC = '/wrench'
 
 def get_cfg():
     return _C.clone()
