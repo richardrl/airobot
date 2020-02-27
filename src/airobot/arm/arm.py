@@ -28,8 +28,6 @@ class ARM(object):
                 eetool_cfg = {}
             cls_name = cfgs.EETOOL.CLASS
             from airobot.ee_tool import cls_name_to_path as ee_cls_name_to_path
-            import pdb
-            pdb.set_trace()
             eetool_calss = load_class_from_path(cls_name,
                                                 ee_cls_name_to_path[cls_name])
             self.eetool = eetool_calss(cfgs, **eetool_cfg)

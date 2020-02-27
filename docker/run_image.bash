@@ -1,4 +1,5 @@
 IMAGE=anthonysimeonov/airobot-cuda-dev:latest
+IMAGE=richardrl/airobot:latest
 XAUTH=/tmp/.docker.xauth
 CAMERA_CALIB_DIR=$PWD/../../camera_calibration
 CODE_DIR=/home/temp_user/improbableai/bandu_code/examples/ur5e/real/bandu

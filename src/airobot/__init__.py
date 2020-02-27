@@ -125,8 +125,6 @@ class Robot:
                 cfgs.HAS_EETOOL = False
             if cfgs.HAS_EETOOL:
                 cfgs.EETOOL.CLASS = cfgs.EETOOL.CLASS + class_suffix
-            # import pdb
-            # pdb.set_trace()
             arm_cfg['eetool_cfg'] = eetool_cfg
             self.arm = arm_class(cfgs, **arm_cfg)
         if cfgs.HAS_BASE and use_base:

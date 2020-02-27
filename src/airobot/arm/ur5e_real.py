@@ -25,6 +25,7 @@ from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from geometry_msgs.msg import WrenchStamped
 import threading
+from queue import Queue
 
 class UR5eReal(SingleArmROS):
     """
@@ -67,7 +68,7 @@ class UR5eReal(SingleArmROS):
             self.set_comm_mode(use_urscript=False)
         self.is_jpos_in_good_range()
 
-        self._tcp_wrench = dict() # Tool center point wrench
+        self._tcp_wrench_queue = Queue(maxsize=500) # Tool center point wrench
 
         if self.cfgs['HAS_EETOOL']:
             rospy.Subscriber(self.cfgs.EETOOL.TCP_WRENCH_TOPIC,
@@ -79,21 +80,24 @@ class UR5eReal(SingleArmROS):
         """
 
         Args:
-            msg:
+            msg (WrenchStamped):
 
         Returns:
 
         """
 
         self._tcp_wrench_lock.acquire()
-        self._tcp_wrench = convert_ros_message_to_dictionary(msg)
+        self._tcp_wrench_queue.put(convert_ros_message_to_dictionary(msg))
         self._tcp_wrench_lock.release()
 
-    def get_tcp_wrench(self):
+    def get_tcp_wrench_queue(self):
         self._tcp_wrench_lock.acquire()
-        tcp_wrench = self._tcp_wrench.copy()
+        from copy import deepcopy
+        tcp_wrench_queue = deepcopy(self._tcp_wrench_queue)
         self._tcp_wrench_lock.release()
-        return tcp_wrench
+        self._tcp_wrench_queue.queue.clear()
+
+        return tcp_wrench_queue
         
     def is_jpos_in_good_range(self):
         """
