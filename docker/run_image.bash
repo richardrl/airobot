@@ -1,8 +1,8 @@
 IMAGE=anthonysimeonov/airobot-cuda-dev:latest
 IMAGE=richardrl/airobot:latest
 XAUTH=/tmp/.docker.xauth
-CAMERA_CALIB_DIR=$PWD/../../camera_calibration
-CODE_DIR=/home/temp_user/improbableai/bandu_code/examples/ur5e/real/bandu
+CAMERA_CALIB_DIR=$PWD/../../camera_calib
+BANDU_CODE=/scratch/rli14/improbable/bandu_code/bandu
 if [ ! -f $XAUTH ]
 then
     xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
@@ -15,6 +15,8 @@ then
     chmod a+r $XAUTH
 fi
 
+echo $PWD
+
 docker run -it \
     --env="DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
@@ -23,9 +25,10 @@ docker run -it \
     --volume="$XAUTH:$XAUTH" \
     --volume="$CAMERA_CALIB_DIR/:/root/catkin_ws/src/camera_calibration/" \
     --volume="$PWD/../:/home/improbable/airobot/" \
-    --volume="$CODE_DIR/:/home/improbable/bandu/" \
+    --volume="$BANDU_CODE/:/home/improbable/bandu" \
     --privileged \
     --runtime=nvidia \
     --net=host \
-    ${IMAGE}
-
+    --entrypoint='' \
+    ${IMAGE} \
+    bash

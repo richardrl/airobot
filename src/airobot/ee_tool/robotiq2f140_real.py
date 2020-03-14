@@ -28,8 +28,10 @@ class Robotiq2F140Real(EndEffectorTool):
         jnt_names (list): list of joint names of the gripper.
     """
 
-    def __init__(self, cfgs):
-        super(Robotiq2F140Real, self).__init__(cfgs=cfgs)
+    def __init__(self,
+                 cfgs,
+                 rtde=True):
+        super(Robotiq2F140Real, self).__init__(configs=cfgs)
         self.jnt_names = [
             'finger_joint', 'left_inner_knuckle_joint',
             'left_inner_finger_joint', 'right_outer_knuckle_joint',
@@ -40,6 +42,9 @@ class Robotiq2F140Real(EndEffectorTool):
         self._comm_initialized = False
         self._get_state_lock = threading.RLock()
         self._initialize_comm()
+
+        self.rtde = rtde
+
 
         if not self._gazebo_sim:
             self._gripper_data = None
@@ -73,7 +78,7 @@ class Robotiq2F140Real(EndEffectorTool):
             urscript = self._get_new_urscript()
 
             urscript.set_activate()
-            urscript.set_gripper_speed(self.cfgs.EETOOL.DEFAULT_SPEED)
+            urscript.set_gripper_speed(self.configs.EETOOL.DEFAULT_SPEED)
 
             urscript.sleep(0.1)
 
@@ -95,13 +100,13 @@ class Robotiq2F140Real(EndEffectorTool):
         """
         pos = clamp(
             pos,
-            self.cfgs.EETOOL.OPEN_ANGLE,
-            self.cfgs.EETOOL.CLOSE_ANGLE
+            self.configs.EETOOL.OPEN_ANGLE,
+            self.configs.EETOOL.CLOSE_ANGLE
         )
         if not self._gazebo_sim:
             urscript = self._get_new_urscript()
 
-            pos = int(pos * self.cfgs.EETOOL.POSITION_SCALING)
+            pos = int(pos * self.configs.EETOOL.POSITION_SCALING)
 
             urscript.set_gripper_position(pos)
             urscript.sleep(0.1)
@@ -136,13 +141,13 @@ class Robotiq2F140Real(EndEffectorTool):
         """
         Open gripper.
         """
-        self.set_pos(self.cfgs.EETOOL.OPEN_ANGLE)
+        self.set_pos(self.configs.EETOOL.OPEN_ANGLE)
 
     def close(self):
         """
         Close gripper.
         """
-        self.set_pos(self.cfgs.EETOOL.CLOSE_ANGLE)
+        self.set_pos(self.configs.EETOOL.CLOSE_ANGLE)
 
     def get_pos(self):
         """
@@ -176,9 +181,9 @@ class Robotiq2F140Real(EndEffectorTool):
         interfaces.
         """
         urscript = Robotiq2F140URScript(
-            socket_host=self.cfgs.EETOOL.SOCKET_HOST,
-            socket_port=self.cfgs.EETOOL.SOCKET_PORT,
-            socket_name=self.cfgs.EETOOL.SOCKET_NAME)
+            socket_host=self.configs.EETOOL.SOCKET_HOST,
+            socket_port=self.configs.EETOOL.SOCKET_PORT,
+            socket_name=self.configs.EETOOL.SOCKET_NAME)
 
         urscript.sleep(0.1)
         return urscript
@@ -223,13 +228,13 @@ class Robotiq2F140Real(EndEffectorTool):
         buffer_size = 1024
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.settimeout(self.cfgs.EETOOL.UPDATE_TIMEOUT)
+        s.settimeout(self.configs.EETOOL.UPDATE_TIMEOUT)
         s.bind((hostname, tcp_port))
 
         while returned_pos is None and not gripper_stopped:
-            if time.time() - start > self.cfgs.EETOOL.UPDATE_TIMEOUT:
+            if time.time() - start > self.configs.EETOOL.UPDATE_TIMEOUT:
                 prnt_str = 'Unable to update gripper position value in %f' \
-                           ' s, exiting' % self.cfgs.EETOOL.UPDATE_TIMEOUT
+                           ' s, exiting' % self.configs.EETOOL.UPDATE_TIMEOUT
                 print_red(prnt_str)
                 s.close()
                 return
@@ -238,7 +243,7 @@ class Robotiq2F140Real(EndEffectorTool):
                 conn, _ = s.accept()
             except socket.timeout:
                 prnt_str = 'Unable to accept from socket in %f' \
-                           ' s, exiting' % self.cfgs.EETOOL.UPDATE_TIMEOUT
+                           ' s, exiting' % self.configs.EETOOL.UPDATE_TIMEOUT
                 print_red(prnt_str)
                 s.close()
                 return
@@ -269,14 +274,15 @@ class Robotiq2F140Real(EndEffectorTool):
         Function to run in background thread to publish updated
         gripper state.
         """
-        while not rospy.is_shutdown():
-            try:
-                self._pub_state_lock.acquire()
-                self._pub_gripper_pos.publish(self._updated_gripper_pos)
-                self._pub_state_lock.release()
-                time.sleep(0.002)
-            except rospy.ROSException:
-                pass
+        if not self.rtde:
+            while not rospy.is_shutdown():
+                try:
+                    self._pub_state_lock.acquire()
+                    self._pub_gripper_pos.publish(self._updated_gripper_pos)
+                    self._pub_state_lock.release()
+                    time.sleep(0.002)
+                except rospy.ROSException:
+                    pass
 
     def _get_local_ip(self):
         """
@@ -289,7 +295,7 @@ class Robotiq2F140Real(EndEffectorTool):
         ips = raw_ips.decode('utf8')
         ip_list = ips.split()
         for ip in ip_list:
-            if ip.startswith(self.cfgs.EETOOL.IP_PREFIX):
+            if ip.startswith(self.configs.EETOOL.IP_PREFIX):
                 return ip
         return None
 
@@ -300,12 +306,12 @@ class Robotiq2F140Real(EndEffectorTool):
         """
         if self._gazebo_sim:
             self._pub_command = rospy.Publisher(
-                self.cfgs.EETOOL.GAZEBO_COMMAND_TOPIC,
+                self.configs.EETOOL.GAZEBO_COMMAND_TOPIC,
                 GripperCommandActionGoal,
                 queue_size=10)
         else:
             self._pub_command = rospy.Publisher(
-                self.cfgs.EETOOL.COMMAND_TOPIC,
+                self.configs.EETOOL.COMMAND_TOPIC,
                 String,
                 queue_size=10)
             self._pub_gripper_pos = rospy.Publisher(
@@ -313,7 +319,7 @@ class Robotiq2F140Real(EndEffectorTool):
                 JointState,
                 queue_size=10)
         self._sub_position = rospy.Subscriber(
-            self.cfgs.EETOOL.JOINT_STATE_TOPIC,
+            self.configs.EETOOL.JOINT_STATE_TOPIC,
             JointState,
             self._get_current_pos_cb
         )

@@ -27,6 +27,12 @@ from geometry_msgs.msg import WrenchStamped
 import threading
 from collections import deque
 
+try:
+    import rtde_control
+    import rtde_receive
+except ImportError:
+    print("Unable to import rtde packages")
+
 class UR5eReal(SingleArmROS):
     """
     A Class for interfacing with real UR5e robot.
@@ -40,6 +46,10 @@ class UR5eReal(SingleArmROS):
             mounted. If so, a box will be placed around the camera
             so that moveit is aware of the wrist camera when it's
             doing motion planning.
+        rtde (bool): Whether or not to use RTDE real time controller
+         instead of going through ROS. Note, you must not attempt to
+          use urscript concurrently with this option or the RTDE
+          controller will hang.
 
     Attributes:
         gripper_tip_pos (list): Position of the end effector link frame
@@ -52,8 +62,10 @@ class UR5eReal(SingleArmROS):
     def __init__(self, cfgs,
                  moveit_planner='RRTstarkConfigDefault',
                  eetool_cfg=None,
-                 wrist_cam=True):
-        super(UR5eReal, self).__init__(cfgs=cfgs,
+                 wrist_cam=True,
+                 rtde=False,
+                 ):
+        super(UR5eReal, self).__init__(configs=cfgs,
                                        moveit_planner=moveit_planner,
                                        eetool_cfg=eetool_cfg)
         self._has_wrist_cam = wrist_cam
@@ -62,6 +74,8 @@ class UR5eReal(SingleArmROS):
         if not self._gazebo_sim:
             self.robot_ip = rospy.get_param('robot_ip')
             self.set_comm_mode()
+
+            # if not rtde:
             self._setup_pub_sub()
             self._set_tool_offset()
         else:
@@ -70,11 +84,16 @@ class UR5eReal(SingleArmROS):
 
         self._tcp_wrench_queue = deque([], 500) # Tool center point wrench
 
-        if self.cfgs['HAS_EETOOL']:
-            rospy.Subscriber(self.cfgs.EETOOL.TCP_WRENCH_TOPIC,
+        if self.cfgs['HAS_EETOOL'] and not rtde:
+            rospy.Subscriber(self.configs.EETOOL.TCP_WRENCH_TOPIC,
                          WrenchStamped,
                          self._callback_tcp_wrench)
             # self._tcp_wrench_lock = threading.RLock()
+        self.rtde = rtde
+        if rtde:
+            self.rtde_c = rtde_control.RTDEControlInterface(self.robot_ip)
+            self.rtde_r = rtde_receive.RTDEReceiveInterface(self.robot_ip)
+
 
     def _callback_tcp_wrench(self, msg):
         """
@@ -170,7 +189,11 @@ class UR5eReal(SingleArmROS):
                 tgt_pos = self.get_jpos()
                 arm_jnt_idx = self.arm_jnt_names.index(joint_name)
                 tgt_pos[arm_jnt_idx] = position
-        if self._use_urscript:
+        if self.rtde:
+            self.rtde_c.moveJ(position)
+            print("RTDE SET JPOS SUCCESS")
+            success = True
+        elif self._use_urscript:
             prog = 'movej([%f, %f, %f, %f, %f, %f],' \
                    ' a=%f, v=%f)' % (tgt_pos[0],
                                      tgt_pos[1],
@@ -188,8 +211,8 @@ class UR5eReal(SingleArmROS):
                     get_func=self.get_jpos,
                     joint_name=joint_name,
                     get_func_derv=self.get_jvel,
-                    timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                    max_error=self.cfgs.ARM.MAX_JOINT_ERROR
+                    timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                    max_error=self.configs.ARM.MAX_JOINT_ERROR
                 )
         else:
             self.moveit_group.set_joint_value_target(tgt_pos)
@@ -262,11 +285,20 @@ class UR5eReal(SingleArmROS):
                 velocity,
                 get_func=self.get_jvel,
                 joint_name=joint_name,
-                timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                max_error=self.cfgs.ARM.MAX_JOINT_VEL_ERROR
+                timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                max_error=self.configs.ARM.MAX_JOINT_VEL_ERROR
             )
 
         return success
+
+    def get_ee_pose(self):
+        if self.rtde:
+            pose = self.rtde_r.getActualTCPPose()
+            print("RTDE Get EE Success")
+            pos, quat = pose[:3], arutil.rotvec2quat(pose[3:])
+            return np.array(pos), np.array(quat), None, None
+        else:
+            return super().get_ee_pose()
 
     def set_ee_pose(self, pos=None, ori=None, wait=True,
                     ik_first=False, *args, **kwargs):
@@ -304,7 +336,12 @@ class UR5eReal(SingleArmROS):
             pose = self.get_ee_pose()
             pos = pose[0]
 
-        if self._use_urscript:
+        if self.rtde:
+            pose = pos + arutil.quat2rotvec(quat)
+            # Why does it freeze here?
+            self.rtde_c.moveL(pose)
+            print("RTDE MOVEL SUCCESS")
+        elif self._use_urscript:
             if ik_first:
                 jnt_pos = self.compute_ik(pos, quat)
                 # use movej instead of movel
@@ -331,9 +368,9 @@ class UR5eReal(SingleArmROS):
                     args_dict = {
                         'get_func': self.get_ee_pose,
                         'get_func_derv': self.get_ee_vel,
-                        'timeout': self.cfgs.ARM.TIMEOUT_LIMIT,
-                        'pos_tol': self.cfgs.ARM.MAX_EE_POS_ERROR,
-                        'ori_tol': self.cfgs.ARM.MAX_EE_ORI_ERROR
+                        'timeout': self.configs.ARM.TIMEOUT_LIMIT,
+                        'pos_tol': self.configs.ARM.MAX_EE_POS_ERROR,
+                        'ori_tol': self.configs.ARM.MAX_EE_ORI_ERROR
                     }
                     success = wait_to_reach_ee_goal(pos, quat,
                                                     **args_dict)
@@ -367,9 +404,12 @@ class UR5eReal(SingleArmROS):
         Returns:
             bool: True if robot successfully reached the goal pose.
         """
+        import pdb
+        pdb.set_trace()
+
         ee_pos, ee_quat, ee_rot_mat, ee_euler = self.get_ee_pose()
 
-        if self._use_urscript:
+        if self.rtde or self._use_urscript:
             ee_pos[0] += delta_xyz[0]
             ee_pos[1] += delta_xyz[1]
             ee_pos[2] += delta_xyz[2]
@@ -403,7 +443,7 @@ class UR5eReal(SingleArmROS):
                     [0, 0, 0, 1],
                     size=[0.25, 0.50, 1.0],
                     obj_type='box',
-                    ref_frame=self.cfgs.ARM.ROBOT_BASE_FRAME):
+                    ref_frame=self.configs.ARM.ROBOT_BASE_FRAME):
                 ur_base_attached = True
                 break
             time.sleep(1)
@@ -439,7 +479,7 @@ class UR5eReal(SingleArmROS):
                           'you use moveit to plan paths!'
                           'You can try again to add the camera box manually.')
 
-        self._max_torques = self.cfgs.ARM.MAX_TORQUES
+        self._max_torques = self.configs.ARM.MAX_TORQUES
 
     def _send_urscript(self, prog):
         """
@@ -480,7 +520,7 @@ class UR5eReal(SingleArmROS):
             - list: Euler angle orientation component of the gripper
               tip transform. (shape :math:`[3,]`).
         """
-        ee_frame = self.cfgs.ARM.ROBOT_EE_FRAME
+        ee_frame = self.configs.ARM.ROBOT_EE_FRAME
         gripper_tip_id = self.arm_link_names.index(ee_frame)
         gripper_tip_link = self._urdf_chain.getSegment(gripper_tip_id)
         gripper_tip_tf = kdl_frame_to_numpy(gripper_tip_link.getFrameToTip())
@@ -528,13 +568,13 @@ class UR5eReal(SingleArmROS):
         """
         # for publishing joint speed to real robot
         self._joint_vel_pub = rospy.Publisher(
-            self.cfgs.ARM.JOINT_SPEED_TOPIC,
+            self.configs.ARM.JOINT_SPEED_TOPIC,
             JointTrajectory,
             queue_size=2
         )
 
         self._urscript_pub = rospy.Publisher(
-            self.cfgs.ARM.URSCRIPT_TOPIC,
+            self.configs.ARM.URSCRIPT_TOPIC,
             String,
             queue_size=10
         )

@@ -1,7 +1,7 @@
-airobot.cfgs.yumi\_cfg
+airobot.configs.yumi\_cfg
 =============================
 
-.. automodule:: airobot.cfgs.yumi_cfg
+.. automodule:: airobot.configs.yumi_cfg
     :members:
     :undoc-members:
     :show-inheritance:

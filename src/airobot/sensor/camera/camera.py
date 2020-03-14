@@ -8,14 +8,14 @@ class Camera(object):
     Base class for cameras.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the camera.
+        configs (YACS CfgNode): configurations for the camera.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the camera.
+        configs (YACS CfgNode): configurations for the camera.
     """
 
-    def __init__(self, cfgs):
-        self.cfgs = cfgs
+    def __init__(self, configs):
+        self.configs = configs
 
     def get_images(self, get_rgb=True, get_depth=True, **kwargs):
         """

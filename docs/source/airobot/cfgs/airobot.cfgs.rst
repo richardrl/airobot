@@ -3,10 +3,10 @@ airobot.cfgs
 
 .. toctree::
 
-   airobot.cfgs.ur5e_cfg
-   airobot.cfgs.ur5e_2f140_cfg
-   airobot.cfgs.ur5e_stick_cfg
-   airobot.cfgs.yumi_cfg
-   airobot.cfgs.yumi_grippers_cfg
-   airobot.cfgs.yumi_palms_cfg
-   assets/airobot.cfgs.assets
+   airobot.configs.ur5e_cfg
+   airobot.configs.ur5e_2f140_cfg
+   airobot.configs.ur5e_stick_cfg
+   airobot.configs.yumi_cfg
+   airobot.configs.yumi_grippers_cfg
+   airobot.configs.yumi_palms_cfg
+   assets/airobot.configs.assets

@@ -37,17 +37,17 @@ class RGBDCameraReal(RGBDCamera):
     """
 
     def __init__(self, cfgs, cam_name=None):
-        super(RGBDCameraReal, self).__init__(cfgs=cfgs)
-        self.depth_scale = self.cfgs.CAM.REAL.DEPTH_SCALE
+        super(RGBDCameraReal, self).__init__(configs=cfgs)
+        self.depth_scale = self.configs.CAM.REAL.DEPTH_SCALE
         self.cam_int_mat = None
         self.img_height = None
         self.img_width = None
         self.cam_ext_mat = None  # extrinsic matrix T
-        self.depth_min = self.cfgs.CAM.REAL.DEPTH_MIN
-        self.depth_max = self.cfgs.CAM.REAL.DEPTH_MAX
-        self._depth_topic = self.cfgs.CAM.REAL.ROSTOPIC_CAMERA_DEPTH
-        self._rgb_topic = self.cfgs.CAM.REAL.ROSTOPIC_CAMERA_RGB
-        self._cam_info_topic = self.cfgs.CAM.REAL.ROSTOPIC_CAMERA_INFO
+        self.depth_min = self.configs.CAM.REAL.DEPTH_MIN
+        self.depth_max = self.configs.CAM.REAL.DEPTH_MAX
+        self._depth_topic = self.configs.CAM.REAL.ROSTOPIC_CAMERA_DEPTH
+        self._rgb_topic = self.configs.CAM.REAL.ROSTOPIC_CAMERA_RGB
+        self._cam_info_topic = self.configs.CAM.REAL.ROSTOPIC_CAMERA_INFO
 
         if cam_name is not None:
             self._depth_topic = self._rp_cam_name(self._depth_topic,

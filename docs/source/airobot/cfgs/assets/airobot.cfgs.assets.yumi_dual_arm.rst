@@ -1,7 +1,7 @@
-airobot.cfgs.assets.yumi\_dual\_arm
+airobot.configs.assets.yumi\_dual\_arm
 ===================================
 
-.. automodule:: airobot.cfgs.assets.yumi_dual_arm
+.. automodule:: airobot.configs.assets.yumi_dual_arm
     :members:
     :undoc-members:
     :show-inheritance:

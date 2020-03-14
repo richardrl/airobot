@@ -1,7 +1,7 @@
-airobot.cfgs.yumi\_palms\_cfg
+airobot.configs.yumi\_palms\_cfg
 =============================
 
-.. automodule:: airobot.cfgs.yumi_palms_cfg
+.. automodule:: airobot.configs.yumi_palms_cfg
     :members:
     :undoc-members:
     :show-inheritance:

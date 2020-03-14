@@ -39,7 +39,7 @@ class UR5ePybullet(SingleArmPybullet):
                  seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(UR5ePybullet, self).__init__(cfgs=cfgs,
+        super(UR5ePybullet, self).__init__(configs=cfgs,
                                            pb_client=pb_client,
                                            seed=seed,
                                            self_collision=self_collision,
@@ -59,17 +59,17 @@ class UR5ePybullet(SingleArmPybullet):
                                            rgba=[0.7, 0.77, 0.7, 1],
                                            specular=[1, 1, 1, 1])
 
-        self.robot_base_pos = self.cfgs.ARM.PYBULLET_RESET_POS
-        robot_base_ori = self.cfgs.ARM.PYBULLET_RESET_ORI
+        self.robot_base_pos = self.configs.ARM.PYBULLET_RESET_POS
+        robot_base_ori = self.configs.ARM.PYBULLET_RESET_ORI
         self.robot_base_ori = arutil.euler2quat(robot_base_ori).tolist()
         if self._self_collision:
             colli_flag = self._pb.URDF_USE_SELF_COLLISION
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               self.robot_base_pos,
                                               self.robot_base_ori,
                                               flags=colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               self.robot_base_pos,
                                               self.robot_base_ori)
         self._build_jnt_id()

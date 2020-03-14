@@ -44,7 +44,7 @@ class CompliantYumiArm(SingleArmPybullet):
                  seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(CompliantYumiArm, self).__init__(cfgs=cfgs,
+        super(CompliantYumiArm, self).__init__(configs=cfgs,
                                                pb_client=pb_client,
                                                seed=seed,
                                                self_collision=self_collision,
@@ -103,8 +103,8 @@ class CompliantYumiArm(SingleArmPybullet):
                 get_func=self.get_jpos,
                 joint_name=joint_name,
                 get_func_derv=self.get_jvel,
-                timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                max_error=self.cfgs.ARM.MAX_JOINT_ERROR
+                timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                max_error=self.configs.ARM.MAX_JOINT_ERROR
             )
         return success
 
@@ -160,8 +160,8 @@ class CompliantYumiArm(SingleArmPybullet):
                 tgt_vel,
                 get_func=self.get_jvel,
                 joint_name=joint_name,
-                timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                max_error=self.cfgs.ARM.MAX_JOINT_VEL_ERROR
+                timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                max_error=self.configs.ARM.MAX_JOINT_VEL_ERROR
             )
         return success
 
@@ -234,14 +234,14 @@ class CompliantYumiArm(SingleArmPybullet):
         """
         Initialize additional constants relevant to compliant joints.
         """
-        self.comp_jnt_names = self.cfgs.ARM.COMPLIANT_JOINT_NAMES
+        self.comp_jnt_names = self.configs.ARM.COMPLIANT_JOINT_NAMES
 
         self.comp_dof = len(self.comp_jnt_names)
 
-        self.comp_jnt_gains = self.cfgs.ARM.COMPLIANT_GAINS
+        self.comp_jnt_gains = self.configs.ARM.COMPLIANT_GAINS
         self.comp_jnt_ids = [self.jnt_to_id[jnt]
                              for jnt in self.comp_jnt_names]
-        self.max_force_comp = self.cfgs.ARM.COMPLIANT_MAX_FORCE
+        self.max_force_comp = self.configs.ARM.COMPLIANT_MAX_FORCE
 
 
 class YumiPalmsPybullet(DualArmPybullet):
@@ -271,7 +271,7 @@ class YumiPalmsPybullet(DualArmPybullet):
     def __init__(self, cfgs, pb_client, seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(YumiPalmsPybullet, self).__init__(cfgs=cfgs,
+        super(YumiPalmsPybullet, self).__init__(configs=cfgs,
                                                 pb_client=pb_client,
                                                 seed=seed,
                                                 self_collision=self_collision,
@@ -294,16 +294,16 @@ class YumiPalmsPybullet(DualArmPybullet):
         """
         self._pb.resetSimulation()
 
-        yumi_pos = self.cfgs.ARM.PYBULLET_RESET_POS
-        yumi_ori = arutil.euler2quat(self.cfgs.ARM.PYBULLET_RESET_ORI)
+        yumi_pos = self.configs.ARM.PYBULLET_RESET_POS
+        yumi_ori = arutil.euler2quat(self.configs.ARM.PYBULLET_RESET_ORI)
         if self._self_collision:
             colli_flag = {'flags': self._pb.URDF_USE_SELF_COLLISION}
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos,
                                               yumi_ori,
                                               **colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos, yumi_ori)
 
         self._build_jnt_id()
@@ -321,8 +321,8 @@ class YumiPalmsPybullet(DualArmPybullet):
             left_arm (CompliantYumiArm): Instance of a single
                 yumi arm with compliant joints.
         """
-        self.arms[self.cfgs.ARM.RIGHT.ARM.NAME] = right_arm
-        self.arms[self.cfgs.ARM.LEFT.ARM.NAME] = left_arm
+        self.arms[self.configs.ARM.RIGHT.ARM.NAME] = right_arm
+        self.arms[self.configs.ARM.LEFT.ARM.NAME] = left_arm
 
         for arm in self.arms.values():
             arm.robot_id = self.robot_id

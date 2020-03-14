@@ -1,7 +1,7 @@
-airobot.cfgs.ur5e\_cfg
+airobot.configs.ur5e\_cfg
 =============================
 
-.. automodule:: airobot.cfgs.ur5e_cfg
+.. automodule:: airobot.configs.ur5e_cfg
     :members:
     :undoc-members:
     :show-inheritance:

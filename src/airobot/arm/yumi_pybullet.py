@@ -35,7 +35,7 @@ class YumiPybullet(DualArmPybullet):
     def __init__(self, cfgs, pb_client, seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(YumiPybullet, self).__init__(cfgs=cfgs,
+        super(YumiPybullet, self).__init__(configs=cfgs,
                                            pb_client=pb_client,
                                            seed=seed,
                                            self_collision=self_collision,
@@ -60,16 +60,16 @@ class YumiPybullet(DualArmPybullet):
         """
         self._pb.resetSimulation()
 
-        yumi_pos = self.cfgs.ARM.PYBULLET_RESET_POS
-        yumi_ori = arutil.euler2quat(self.cfgs.ARM.PYBULLET_RESET_ORI)
+        yumi_pos = self.configs.ARM.PYBULLET_RESET_POS
+        yumi_ori = arutil.euler2quat(self.configs.ARM.PYBULLET_RESET_ORI)
         if self._self_collision:
             colli_flag = {'flags': self._pb.URDF_USE_SELF_COLLISION}
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos,
                                               yumi_ori,
                                               **colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos, yumi_ori)
 
         self._build_jnt_id()
