@@ -1,8 +1,10 @@
 IMAGE=anthonysimeonov/airobot-cuda-dev:latest
 IMAGE=richardrl/airobot:latest
+IMAGE=richardrl/airobot-cuda9
 XAUTH=/tmp/.docker.xauth
 CAMERA_CALIB_DIR=$PWD/../../camera_calibration
 CODE_DIR=/home/temp_user/improbableai/bandu_code/examples/ur5e/real/bandu
+GELSIGHT_DIR=/home/richard/forks/GelSight_Wedge
 if [ ! -f $XAUTH ]
 then
     xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
@@ -22,6 +24,7 @@ docker run -it \
     --env="XAUTHORITY=$XAUTH" \
     --volume="$XAUTH:$XAUTH" \
     --volume="$CAMERA_CALIB_DIR/:/root/catkin_ws/src/camera_calibration/" \
+    --volume="$GELSIGHT_DIR/:/root/catkin_ws/src/Gelsight_Wedge/" \
     --volume="$PWD/../:/home/improbable/airobot/" \
     --volume="$CODE_DIR/:/home/improbable/bandu/" \
     --privileged \

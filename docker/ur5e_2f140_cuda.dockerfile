@@ -22,7 +22,7 @@ RUN touch /root/.ssh/known_hosts
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 
 # clone private repo - airobot
-RUN --mount=type=ssh git clone -b dev git@github.com:Improbable-AI/ur5e.git
+RUN --mount=type=ssh git clone -b master git@github.com:Improbable-AI/ur5e.git
 RUN --mount=type=ssh git clone -b qa git@github.com:Improbable-AI/camera_calibration.git
 WORKDIR /root/tmp_code/ur5e
 
@@ -30,7 +30,7 @@ WORKDIR /root/tmp_code/ur5e
 RUN --mount=type=ssh git submodule update --init
 
 ### second stage ###
-FROM nvidia/cudagl:10.1-runtime-ubuntu16.04
+FROM nvidia/cudagl:9.1-runtime-ubuntu16.04
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
