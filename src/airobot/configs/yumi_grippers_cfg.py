@@ -1,7 +1,7 @@
-from airobot.cfgs.assets.pybullet_camera import get_sim_cam_cfg
-from airobot.cfgs.assets.realsense_camera import get_realsense_cam_cfg
-from airobot.cfgs.assets.yumi_dual_arm import get_yumi_dual_arm_cfg
-from airobot.cfgs.assets.yumi_parallel_jaw import get_yumi_parallel_jaw_cfg
+from airobot.configs.assets.pybullet_camera import get_sim_cam_cfg
+from airobot.configs.assets.realsense_camera import get_realsense_cam_cfg
+from airobot.configs.assets.yumi_dual_arm import get_yumi_dual_arm_cfg
+from airobot.configs.assets.yumi_parallel_jaw import get_yumi_parallel_jaw_cfg
 
 _C = get_yumi_dual_arm_cfg()
 

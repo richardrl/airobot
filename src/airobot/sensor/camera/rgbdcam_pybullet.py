@@ -19,12 +19,12 @@ class RGBDCameraPybullet(RGBDCamera):
 
     def __init__(self, cfgs, pb_client):
         self._pb = pb_client
-        super(RGBDCameraPybullet, self).__init__(cfgs=cfgs)
+        super(RGBDCameraPybullet, self).__init__(configs=cfgs)
         self.view_matrix = None
         self.proj_matrix = None
         self.depth_scale = 1
-        self.depth_min = self.cfgs.CAM.SIM.ZNEAR
-        self.depth_max = self.cfgs.CAM.SIM.ZFAR
+        self.depth_min = self.configs.CAM.SIM.ZNEAR
+        self.depth_max = self.configs.CAM.SIM.ZFAR
 
     def setup_camera(self, focus_pt=None, dist=3,
                      yaw=0, pitch=0, roll=0,
@@ -57,12 +57,12 @@ class RGBDCameraPybullet(RGBDCamera):
                                                         roll,
                                                         upAxisIndex=2)
         self.view_matrix = np.array(vm).reshape(4, 4)
-        self.img_height = height if height else self.cfgs.CAM.SIM.HEIGHT
-        self.img_width = width if width else self.cfgs.CAM.SIM.WIDTH
+        self.img_height = height if height else self.configs.CAM.SIM.HEIGHT
+        self.img_width = width if width else self.configs.CAM.SIM.WIDTH
         aspect = self.img_width / float(self.img_height)
-        znear = self.cfgs.CAM.SIM.ZNEAR
-        zfar = self.cfgs.CAM.SIM.ZFAR
-        fov = self.cfgs.CAM.SIM.FOV
+        znear = self.configs.CAM.SIM.ZNEAR
+        zfar = self.configs.CAM.SIM.ZFAR
+        fov = self.configs.CAM.SIM.FOV
         pm = self._pb.computeProjectionMatrixFOV(fov,
                                                  aspect,
                                                  znear,
@@ -146,8 +146,8 @@ class RGBDCameraPybullet(RGBDCamera):
         if get_depth:
             depth_buffer = np.reshape(images[3], [self.img_height,
                                                   self.img_width])
-            znear = self.cfgs.CAM.SIM.ZNEAR
-            zfar = self.cfgs.CAM.SIM.ZFAR
+            znear = self.configs.CAM.SIM.ZNEAR
+            zfar = self.configs.CAM.SIM.ZFAR
             depth = zfar * znear / (zfar - (zfar - znear) * depth_buffer)
         if get_seg:
             seg = np.reshape(images[4], [self.img_height,

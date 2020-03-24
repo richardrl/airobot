@@ -29,15 +29,15 @@ class YumiParallelJawPybullet(EndEffectorTool):
 
     def __init__(self, cfgs, pb_client):
         self._pb = pb_client
-        super(YumiParallelJawPybullet, self).__init__(cfgs=cfgs)
+        super(YumiParallelJawPybullet, self).__init__(configs=cfgs)
         self._gripper_mimic_coeff = [1, 1]
 
-        self.jnt_names = self.cfgs.EETOOL.JOINT_NAMES
+        self.jnt_names = self.configs.EETOOL.JOINT_NAMES
 
         self._step_sim_mode = False
-        self._max_torque = self.cfgs.EETOOL.MAX_FORCE
-        self.gripper_close_angle = self.cfgs.EETOOL.CLOSE_ANGLE
-        self.gripper_open_angle = self.cfgs.EETOOL.OPEN_ANGLE
+        self._max_torque = self.configs.EETOOL.MAX_FORCE
+        self.gripper_close_angle = self.configs.EETOOL.CLOSE_ANGLE
+        self.gripper_open_angle = self.configs.EETOOL.OPEN_ANGLE
 
         self._mthread_started = False
         self.deactivate()
@@ -131,8 +131,8 @@ class YumiParallelJawPybullet(EndEffectorTool):
                 get_func=self.get_pos,
                 joint_name=joint_name,
                 get_func_derv=self.get_vel,
-                timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                max_error=self.cfgs.ARM.MAX_JOINT_ERROR
+                timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                max_error=self.configs.ARM.MAX_JOINT_ERROR
             )
         return success
 

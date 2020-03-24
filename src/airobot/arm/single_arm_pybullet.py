@@ -49,7 +49,7 @@ class SingleArmPybullet(ARM):
                  eetool_cfg=None):
         self._self_collision = self_collision
         self._pb = pb_client
-        super(SingleArmPybullet, self).__init__(cfgs=cfgs,
+        super(SingleArmPybullet, self).__init__(configs=cfgs,
                                                 eetool_cfg=eetool_cfg)
         self.robot_id = None
         self._np_random, _ = self._seed(seed)
@@ -69,7 +69,7 @@ class SingleArmPybullet(ARM):
         """
         Reset the simulation environment.
         """
-        self.robot_id = self._pb.loadURDF(self.cfgs.PYBULLET_URDF,
+        self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                           [0, 0, 0], [0, 0, 0, 1])
 
     def set_jpos(self, position, joint_name=None,
@@ -144,8 +144,8 @@ class SingleArmPybullet(ARM):
                 get_func=self.get_jpos,
                 joint_name=joint_name,
                 get_func_derv=self.get_jvel,
-                timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                max_error=self.cfgs.ARM.MAX_JOINT_ERROR
+                timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                max_error=self.configs.ARM.MAX_JOINT_ERROR
             )
         return success
 
@@ -200,8 +200,8 @@ class SingleArmPybullet(ARM):
                     tgt_vel,
                     get_func=self.get_jvel,
                     joint_name=joint_name,
-                    timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                    max_error=self.cfgs.ARM.MAX_JOINT_VEL_ERROR
+                    timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                    max_error=self.configs.ARM.MAX_JOINT_VEL_ERROR
                 )
             else:
                 success = True
@@ -604,14 +604,14 @@ class SingleArmPybullet(ARM):
         """
         Initialize constants
         """
-        self._home_position = self.cfgs.ARM.HOME_POSITION
+        self._home_position = self.configs.ARM.HOME_POSITION
         # joint damping for inverse kinematics
-        self._ik_jd = self.cfgs.ARM.PYBULLET_IK_DAMPING
-        self._max_torques = self.cfgs.ARM.MAX_TORQUES
-        self.arm_jnt_names = self.cfgs.ARM.JOINT_NAMES
+        self._ik_jd = self.configs.ARM.PYBULLET_IK_DAMPING
+        self._max_torques = self.configs.ARM.MAX_TORQUES
+        self.arm_jnt_names = self.configs.ARM.JOINT_NAMES
 
         self.arm_dof = len(self.arm_jnt_names)
-        self.ee_link_jnt = self.cfgs.ARM.ROBOT_EE_FRAME_JOINT
+        self.ee_link_jnt = self.configs.ARM.ROBOT_EE_FRAME_JOINT
 
     def _build_jnt_id(self):
         """

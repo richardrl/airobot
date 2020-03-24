@@ -15,7 +15,7 @@ class Robot:
 
     Args:
         robot_name (str): robot name
-        pb (bool): if True, the pybullet simulation
+        pybullet (bool): if True, the pybullet simulation
             environment of the robot will be created.
             Otherwise, the ROS environment of the robot
             will be created.
@@ -47,7 +47,7 @@ class Robot:
 
     def __init__(self,
                  robot_name,
-                 pb=True,
+                 pybullet=True,
                  use_arm=True,
                  use_eetool=True,
                  use_base=True,
@@ -58,6 +58,7 @@ class Robot:
                  cam_cfg=None,
                  eetool_cfg=None
                  ):
+
         if pb_cfg is None:
             pb_cfg = {}
         if arm_cfg is None:
@@ -70,31 +71,31 @@ class Robot:
             eetool_cfg = {}
 
         root_path = os.path.dirname(os.path.realpath(__file__))
-        cfgs_root_path = os.path.join(root_path, 'cfgs')
+        cfgs_root_path = os.path.join(root_path, 'configs')
         robot_pool = []
         for f in os.listdir(cfgs_root_path):
             if f.endswith('_cfg.py'):
                 robot_pool.append(f[:-len('_cfg.py')])
 
-        root_node = 'airobot.'
-        cfgs = None
-        for tr in robot_pool:
-            if tr == robot_name:
-                mod = importlib.import_module(root_node + 'cfgs.' +
-                                              '{:s}_cfg'.format(tr))
-                cfg_func = getattr(mod, 'get_cfg')
-                cfgs = cfg_func()
+        root_module = 'airobot.'
+        configs = None
+        for robot_name_from_py in robot_pool:
+            if robot_name_from_py == robot_name:
+                mod = importlib.import_module(root_module + 'configs.' +
+                                              '{:s}_cfg'.format(robot_name_from_py))
+                config_func = getattr(mod, 'get_cfg')
+                configs = config_func()
                 break
-        if cfgs is None:
+        if configs is None:
             raise ValueError('Invalid robot name provided, only the following'
                              ' robots are available: {}'.format(robot_pool))
 
         self.pb_client = None
-        if pb:
+        if pybullet:
             urdfs_root_path = os.path.join(root_path, 'urdfs')
             urdf = os.path.join(urdfs_root_path,
-                                cfgs.PYBULLET_URDF)
-            cfgs.PYBULLET_URDF = urdf
+                                configs.PYBULLET_URDF)
+            configs.PYBULLET_URDF = urdf
             from .utils.pb_util import create_pybullet_client
             pb_client = create_pybullet_client(**pb_cfg)
             arm_cfg['pb_client'] = pb_client
@@ -110,37 +111,39 @@ class Robot:
                 log_info('ROS node [airobot] has already'
                          ' been initialized')
 
-        class_suffix = 'Pybullet' if pb else 'Real'
-        if cfgs.HAS_ARM and use_arm:
-            if cfgs.ARM.CLASS == 'ARM':
-                cls_name = cfgs.ARM.CLASS
-            else:
-                cls_name = cfgs.ARM.CLASS + class_suffix
-            from .arm import cls_name_to_path as arm_cls_name_to_path
-            arm_class = load_class_from_path(cls_name,
-                                             arm_cls_name_to_path[cls_name])
+        class_suffix = 'Pybullet' if pybullet else 'Real'
+        if configs.HAS_ARM and use_arm:
+            # if configs.ARM.CLASS == 'ARM':
+            #     class_name = configs.ARM.CLASS
+            # else:
+            class_name = configs.ARM.CLASS + class_suffix
+
+            from .arm import class_names_to_paths as arm_class_names_to_paths
+            arm_class = load_class_from_path(class_name,
+                                             arm_class_names_to_paths[class_name])
             if use_eetool:
-                cfgs.HAS_EETOOL = True
+                configs.HAS_EETOOL = True
             else:
-                cfgs.HAS_EETOOL = False
-            if cfgs.HAS_EETOOL:
-                cfgs.EETOOL.CLASS = cfgs.EETOOL.CLASS + class_suffix
+                configs.HAS_EETOOL = False
+            if configs.HAS_EETOOL:
+                configs.EETOOL.CLASS = configs.EETOOL.CLASS + class_suffix
             arm_cfg['eetool_cfg'] = eetool_cfg
-            self.arm = arm_class(cfgs, **arm_cfg)
-        if cfgs.HAS_BASE and use_base:
-            cls_name = cfgs.BASE.CLASS + class_suffix
+
+            self.arm = arm_class(configs, **arm_cfg)
+        if configs.HAS_BASE and use_base:
+            class_name = configs.BASE.CLASS + class_suffix
             from .base import cls_name_to_path as base_cls_name_to_path
-            base_class = load_class_from_path(cls_name,
-                                              base_cls_name_to_path[cls_name])
-            self.base = base_class(cfgs, **base_cfg)
-        if cfgs.HAS_CAMERA and use_cam:
-            cls_name = cfgs.CAM.CLASS + class_suffix
+            base_class = load_class_from_path(class_name,
+                                              base_cls_name_to_path[class_name])
+            self.base = base_class(configs, **base_cfg)
+        if configs.HAS_CAMERA and use_cam:
+            class_name = configs.CAM.CLASS + class_suffix
             from .sensor.camera import cls_name_to_path \
                 as cam_cls_name_to_path
-            camera_class = load_class_from_path(cls_name,
-                                                cam_cls_name_to_path[cls_name])
-            self.cam = camera_class(cfgs, **cam_cfg)
-        cfgs.freeze()
+            camera_class = load_class_from_path(class_name,
+                                                cam_cls_name_to_path[class_name])
+            self.cam = camera_class(configs, **cam_cfg)
+        configs.freeze()
         time.sleep(1.0)  # sleep to give subscribers time to connect
 
 

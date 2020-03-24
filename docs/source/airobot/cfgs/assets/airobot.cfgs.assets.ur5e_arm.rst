@@ -1,7 +1,7 @@
-airobot.cfgs.assets.ur5e\_arm
+airobot.configs.assets.ur5e\_arm
 ================================
 
-.. automodule:: airobot.cfgs.assets.ur5e_arm
+.. automodule:: airobot.configs.assets.ur5e_arm
     :members:
     :undoc-members:
     :show-inheritance:

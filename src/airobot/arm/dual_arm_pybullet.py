@@ -47,7 +47,7 @@ class DualArmPybullet(ARM):
                  eetool_cfg=None):
         self._self_collision = self_collision
         self._pb = pb_client
-        super(DualArmPybullet, self).__init__(cfgs=cfgs,
+        super(DualArmPybullet, self).__init__(configs=cfgs,
                                               eetool_cfg=eetool_cfg)
 
         self._np_random, _ = self._seed(seed)
@@ -67,8 +67,8 @@ class DualArmPybullet(ARM):
             right_arm (SingleArmPybullet): Right arm instance.
             left_arm (SingleArmPybullet): Left arm instance.
         """
-        self.arms[self.cfgs.ARM.RIGHT.ARM.NAME] = right_arm
-        self.arms[self.cfgs.ARM.LEFT.ARM.NAME] = left_arm
+        self.arms[self.configs.ARM.RIGHT.ARM.NAME] = right_arm
+        self.arms[self.configs.ARM.LEFT.ARM.NAME] = left_arm
 
         for arm in self.arms.values():
             arm.robot_id = self.robot_id
@@ -138,8 +138,8 @@ class DualArmPybullet(ARM):
                     get_func=self.get_jpos,
                     joint_name=joint_name,
                     get_func_derv=self.get_jvel,
-                    timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                    max_error=self.cfgs.ARM.MAX_JOINT_ERROR
+                    timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                    max_error=self.configs.ARM.MAX_JOINT_ERROR
                 )
         else:
             if arm not in self.arms:
@@ -194,8 +194,8 @@ class DualArmPybullet(ARM):
                     tgt_vel,
                     get_func=self.get_jvel,
                     joint_name=joint_name,
-                    timeout=self.cfgs.ARM.TIMEOUT_LIMIT,
-                    max_error=self.cfgs.ARM.MAX_JOINT_VEL_ERROR
+                    timeout=self.configs.ARM.TIMEOUT_LIMIT,
+                    max_error=self.configs.ARM.MAX_JOINT_VEL_ERROR
                 )
         else:
             if arm not in self.arms:
@@ -577,26 +577,26 @@ class DualArmPybullet(ARM):
         """
         Initialize constants
         """
-        self._r_arm_name = self.cfgs.ARM.RIGHT.ARM.NAME
-        self._l_arm_name = self.cfgs.ARM.LEFT.ARM.NAME
+        self._r_arm_name = self.configs.ARM.RIGHT.ARM.NAME
+        self._l_arm_name = self.configs.ARM.LEFT.ARM.NAME
         self._arm_names = [self._r_arm_name, self._l_arm_name]
 
-        self._r_home_position = self.cfgs.ARM.RIGHT.ARM.HOME_POSITION
-        self._l_home_position = self.cfgs.ARM.LEFT.ARM.HOME_POSITION
+        self._r_home_position = self.configs.ARM.RIGHT.ARM.HOME_POSITION
+        self._l_home_position = self.configs.ARM.LEFT.ARM.HOME_POSITION
         self._home_position = self._r_home_position + self._l_home_position
 
-        self.right_arm_jnt_names = self.cfgs.ARM.RIGHT.ARM.JOINT_NAMES
-        self.left_arm_jnt_names = self.cfgs.ARM.LEFT.ARM.JOINT_NAMES
+        self.right_arm_jnt_names = self.configs.ARM.RIGHT.ARM.JOINT_NAMES
+        self.left_arm_jnt_names = self.configs.ARM.LEFT.ARM.JOINT_NAMES
         self.arm_jnt_names = self.right_arm_jnt_names + self.left_arm_jnt_names
 
         self.dual_arm_dof = len(self.arm_jnt_names)
         self.single_arm_dof = int(self.dual_arm_dof / 2)
 
-        self.r_ee_link_jnt = self.cfgs.ARM.RIGHT.ARM.ROBOT_EE_FRAME_JOINT
-        self.l_ee_link_jnt = self.cfgs.ARM.LEFT.ARM.ROBOT_EE_FRAME_JOINT
+        self.r_ee_link_jnt = self.configs.ARM.RIGHT.ARM.ROBOT_EE_FRAME_JOINT
+        self.l_ee_link_jnt = self.configs.ARM.LEFT.ARM.ROBOT_EE_FRAME_JOINT
 
-        self._r_max_torques = self.cfgs.ARM.RIGHT.ARM.MAX_TORQUES
-        self._l_max_torques = self.cfgs.ARM.LEFT.ARM.MAX_TORQUES
+        self._r_max_torques = self.configs.ARM.RIGHT.ARM.MAX_TORQUES
+        self._l_max_torques = self.configs.ARM.LEFT.ARM.MAX_TORQUES
         self._max_torques = self._r_max_torques + self._l_max_torques
 
     def _build_jnt_id(self):

@@ -1,7 +1,7 @@
-airobot.cfgs.ur5e\_stick\_cfg
+airobot.configs.ur5e\_stick\_cfg
 =============================
 
-.. automodule:: airobot.cfgs.ur5e_stick_cfg
+.. automodule:: airobot.configs.ur5e_stick_cfg
     :members:
     :undoc-members:
     :show-inheritance:

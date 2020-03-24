@@ -1,7 +1,7 @@
-from airobot.cfgs.assets.default_configs import get_cfg_defaults
-from airobot.cfgs.assets.pybullet_camera import get_sim_cam_cfg
-from airobot.cfgs.assets.realsense_camera import get_realsense_cam_cfg
-from airobot.cfgs.assets.ur5e_arm import get_ur5e_arm_cfg
+from airobot.configs.assets.default_configs import get_cfg_defaults
+from airobot.configs.assets.pybullet_camera import get_sim_cam_cfg
+from airobot.configs.assets.realsense_camera import get_realsense_cam_cfg
+from airobot.configs.assets.ur5e_arm import get_ur5e_arm_cfg
 
 _C = get_cfg_defaults()
 # whether the robot has an arm or not
@@ -20,6 +20,7 @@ _C.CAM.SIM = get_sim_cam_cfg()
 _C.CAM.REAL = get_realsense_cam_cfg()
 _C.CAM.CLASS = 'RGBDCamera'
 
+_C.ARM.CLASS = 'UR5eRtde'
 
 def get_cfg():
     return _C.clone()

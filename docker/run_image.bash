@@ -3,7 +3,7 @@ IMAGE=richardrl/airobot:latest
 IMAGE=richardrl/airobot-cuda9
 XAUTH=/tmp/.docker.xauth
 CAMERA_CALIB_DIR=$PWD/../../camera_calibration
-CODE_DIR=/home/richard/improbable/forks/bandu_code
+BANDU_CODE=/home/richard/improbable/forks/bandu_code
 GELSIGHT_DIR=/home/richard/improbable/forks/GelSight_Wedge
 if [ ! -f $XAUTH ]
 then
@@ -17,6 +17,8 @@ then
     chmod a+r $XAUTH
 fi
 
+echo $PWD
+
 docker run -it \
     --env="DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \
@@ -26,9 +28,11 @@ docker run -it \
     --volume="$CAMERA_CALIB_DIR/:/root/catkin_ws/src/camera_calibration/" \
     --volume="$GELSIGHT_DIR/:/root/catkin_ws/src/Gelsight_Wedge/" \
     --volume="$PWD/../:/home/improbable/airobot/" \
-    --volume="$CODE_DIR/:/home/improbable/bandu/" \
+    --volume="$TRACKING_DIR/../:/home/improbable/tracking/" \
+    --volume="$BANDU_CODE/:/home/improbable/bandu" \
     --privileged \
     --runtime=nvidia \
     --net=host \
-    ${IMAGE}
-
+    --entrypoint='' \
+    ${IMAGE} \
+    bash

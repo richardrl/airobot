@@ -38,7 +38,7 @@ class SingleArmReal(ARM):
 
     def __init__(self, cfgs,
                  eetool_cfg=None):
-        super(SingleArmReal, self).__init__(cfgs=cfgs, eetool_cfg=eetool_cfg)
+        super(SingleArmReal, self).__init__(configs=cfgs, eetool_cfg=eetool_cfg)
 
         self._init_real_consts()
 
@@ -228,7 +228,7 @@ class SingleArmReal(ARM):
     def compute_fk_position(self, jpos, tgt_frame):
         """
         Given joint angles, compute the pose of desired_frame with respect
-        to the base frame (self.cfgs.ARM.ROBOT_BASE_FRAME). The desired frame
+        to the base frame (self.configs.ARM.ROBOT_BASE_FRAME). The desired frame
         must be in self.arm_link_names.
 
         Args:
@@ -299,7 +299,7 @@ class SingleArmReal(ARM):
         """
         Compute the inverse kinematics solution given the
         position and orientation of the end effector
-        (self.cfgs.ARM.ROBOT_EE_FRAME).
+        (self.configs.ARM.ROBOT_EE_FRAME).
 
         Args:
             pos (list or np.ndarray): position (shape: :math:`[3,]`).
@@ -327,8 +327,8 @@ class SingleArmReal(ARM):
             qinit = self.get_jpos().tolist()
         elif isinstance(qinit, np.ndarray):
             qinit = qinit.flatten().tolist()
-        pos_tol = self.cfgs.ARM.IK_POSITION_TOLERANCE
-        ori_tol = self.cfgs.ARM.IK_ORIENTATION_TOLERANCE
+        pos_tol = self.configs.ARM.IK_POSITION_TOLERANCE
+        ori_tol = self.configs.ARM.IK_ORIENTATION_TOLERANCE
         jnt_poss = self._num_ik_solver.get_ik(qinit,
                                               pos[0],
                                               pos[1],
@@ -351,16 +351,16 @@ class SingleArmReal(ARM):
         """
         Initialize constants.
         """
-        self._home_position = self.cfgs.ARM.HOME_POSITION
+        self._home_position = self.configs.ARM.HOME_POSITION
 
-        robot_description = self.cfgs.ROBOT_DESCRIPTION
+        robot_description = self.configs.ROBOT_DESCRIPTION
         urdf_string = rospy.get_param(robot_description)
-        self._num_ik_solver = trac_ik.IK(self.cfgs.ARM.ROBOT_BASE_FRAME,
-                                         self.cfgs.ARM.ROBOT_EE_FRAME,
+        self._num_ik_solver = trac_ik.IK(self.configs.ARM.ROBOT_BASE_FRAME,
+                                         self.configs.ARM.ROBOT_EE_FRAME,
                                          urdf_string=urdf_string)
         _, urdf_tree = treeFromParam(robot_description)
-        base_frame = self.cfgs.ARM.ROBOT_BASE_FRAME
-        ee_frame = self.cfgs.ARM.ROBOT_EE_FRAME
+        base_frame = self.configs.ARM.ROBOT_BASE_FRAME
+        ee_frame = self.configs.ARM.ROBOT_EE_FRAME
         self._urdf_chain = urdf_tree.getChain(base_frame,
                                               ee_frame)
         self.arm_jnt_names = self._get_kdl_joint_names()
@@ -371,7 +371,7 @@ class SingleArmReal(ARM):
         self._fk_solver_pos = kdl.ChainFkSolverPos_recursive(self._urdf_chain)
         self._fk_solver_vel = kdl.ChainFkSolverVel_recursive(self._urdf_chain)
 
-        self.ee_link = self.cfgs.ARM.ROBOT_EE_FRAME
+        self.ee_link = self.configs.ARM.ROBOT_EE_FRAME
 
     def _get_kdl_link_names(self):
         """

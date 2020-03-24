@@ -51,7 +51,7 @@ class SingleArmROS(SingleArmReal):
     def __init__(self, cfgs,
                  moveit_planner='RRTstarkConfigDefault',
                  eetool_cfg=None):
-        super(SingleArmROS, self).__init__(cfgs=cfgs, eetool_cfg=eetool_cfg)
+        super(SingleArmROS, self).__init__(configs=cfgs, eetool_cfg=eetool_cfg)
 
         self.moveit_planner = moveit_planner
         self._gazebo_sim = rospy.get_param('sim')
@@ -268,8 +268,8 @@ class SingleArmROS(SingleArmReal):
               (shape: :math:`[3]`).
         """
         pos, quat = get_tf_transform(self.tf_listener,
-                                     self.cfgs.ARM.ROBOT_BASE_FRAME,
-                                     self.cfgs.ARM.ROBOT_EE_FRAME)
+                                     self.configs.ARM.ROBOT_BASE_FRAME,
+                                     self.configs.ARM.ROBOT_EE_FRAME)
         rot_mat = arutil.quat2rot(quat)
         euler_ori = arutil.quat2euler(quat)
         return np.array(pos), np.array(quat), rot_mat, euler_ori
@@ -289,7 +289,7 @@ class SingleArmROS(SingleArmReal):
         jpos = self.get_jpos()
         jvel = self.get_jvel()
         ee_vel = self.compute_fk_velocity(jpos, jvel,
-                                          self.cfgs.ARM.ROBOT_EE_FRAME)
+                                          self.configs.ARM.ROBOT_EE_FRAME)
         return ee_vel[:3], ee_vel[3:]
 
     def scale_motion(self, vel_scale=1.0, acc_scale=1.0):
@@ -315,7 +315,7 @@ class SingleArmROS(SingleArmReal):
         Initialize constants
         """
         moveit_commander.roscpp_initialize(sys.argv)
-        self.moveit_group = MoveGroupCommander(self.cfgs.ARM.MOVEGROUP_NAME)
+        self.moveit_group = MoveGroupCommander(self.configs.ARM.MOVEGROUP_NAME)
         self.moveit_group.set_planner_id(self.moveit_planner)
         self.moveit_group.set_planning_time(1.0)
         self.moveit_scene = MoveitScene()
@@ -326,7 +326,7 @@ class SingleArmROS(SingleArmReal):
         max_vels = []
         max_accs = []
         for arm_jnt in self.arm_jnt_names:
-            jnt_param = self.cfgs.ROBOT_DESCRIPTION + \
+            jnt_param = self.configs.ROBOT_DESCRIPTION + \
                         '_planning/joint_limits/' + arm_jnt
             jnt_params.append(copy.deepcopy(jnt_param))
             max_vels.append(rospy.get_param(jnt_param + '/max_velocity'))
@@ -339,7 +339,7 @@ class SingleArmROS(SingleArmReal):
         self._j_torq = dict()
         self._j_state_lock = threading.RLock()
         self.tf_listener = tf.TransformListener()
-        rospy.Subscriber(self.cfgs.ARM.ROSTOPIC_JOINT_STATES, JointState,
+        rospy.Subscriber(self.configs.ARM.ROSTOPIC_JOINT_STATES, JointState,
                          self._callback_joint_states)
 
     def _callback_joint_states(self, msg):

@@ -1,7 +1,7 @@
-airobot.cfgs.assets.default\_configs
+airobot.configs.assets.default\_configs
 ====================================
 
-.. automodule:: airobot.cfgs.assets.default_configs
+.. automodule:: airobot.configs.assets.default_configs
     :members:
     :undoc-members:
     :show-inheritance:

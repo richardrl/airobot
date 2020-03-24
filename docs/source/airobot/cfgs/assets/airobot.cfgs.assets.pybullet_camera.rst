@@ -1,7 +1,7 @@
-airobot.cfgs.assets.pybullet\_camera
+airobot.configs.assets.pybullet\_camera
 ====================================
 
-.. automodule:: airobot.cfgs.assets.pybullet_camera
+.. automodule:: airobot.configs.assets.pybullet_camera
     :members:
     :undoc-members:
     :show-inheritance:
