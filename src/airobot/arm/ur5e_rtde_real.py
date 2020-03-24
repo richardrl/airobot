@@ -26,6 +26,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from geometry_msgs.msg import WrenchStamped
 import threading
 from collections import deque
+from airobot.utils.common import load_class_from_path
 
 try:
     import rtde_control
@@ -49,22 +50,30 @@ def time_limit(seconds):
     finally:
         signal.alarm(0)
 
-class UR5eRTDEReal:
+class UR5eRtdeReal:
     """
     A Class for interfacing with real UR5e robot using RTDE real time control library
     """
 
     def __init__(self,
                  configs,
-                 robot_ip="192.168.1.3",
                  **kwargs
                  ):
-        self.robot_ip=robot_ip
+        self.robot_ip=configs.IP
         self.rtde_c = rtde_control.RTDEControlInterface(self.robot_ip)
         self.rtde_r = rtde_receive.RTDEReceiveInterface(self.robot_ip)
 
         self.configs = configs
         self._home_position = self.configs.ARM.HOME_POSITION
+
+        if self.configs.HAS_EETOOL:
+            cls_name = configs.EETOOL.CLASS
+            from airobot.ee_tool import cls_name_to_path as ee_cls_name_to_path
+            eetool_class = load_class_from_path(cls_name,
+                                                ee_cls_name_to_path[cls_name])
+            self.eetool = eetool_class(hostname=self.robot_ip,
+                                       port=self.configs.EETOOL.PORT
+                                       )
 
     def set_jpos(self, position, joint_name=None, wait=True, *args, **kwargs):
         """
