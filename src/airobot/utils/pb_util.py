@@ -62,39 +62,37 @@ class BulletClient:
                  connection_mode=None,
                  realtime=False,
                  opengl_render=True):
-        import pdb
-        pdb.set_trace()
         self._in_realtime_mode = realtime
         self.opengl_render = opengl_render
         self._realtime_lock = threading.RLock()
         if connection_mode is None:
-            self._client = pybullet.connect(pybullet.SHARED_MEMORY)
-            if self._client >= 0:
+            self._client_id = pybullet.connect(pybullet.SHARED_MEMORY)
+            if self._client_id >= 0:
                 return
             else:
                 connection_mode = pybullet.DIRECT
-        self._client = pybullet.connect(connection_mode)
+        self._client_id = pybullet.connect(connection_mode)
         is_linux = platform.system() == 'Linux'
         if connection_mode == pybullet.DIRECT and is_linux and opengl_render:
             # # using the eglRendererPlugin (hardware OpenGL acceleration)
             egl = pkgutil.get_loader('eglRenderer')
             if egl:
                 pybullet.loadPlugin(egl.get_filename(), "_eglRendererPlugin",
-                                    physicsClientId=self._client)
+                                    physicsClientId=self._client_id)
             else:
                 pybullet.loadPlugin("eglRendererPlugin",
-                                    physicsClientId=self._client)
+                                    physicsClientId=self._client_id)
         self._gui_mode = connection_mode == pybullet.GUI
         pybullet.setGravity(0, 0, GRAVITY_CONST,
-                            physicsClientId=self._client)
+                            physicsClientId=self._client_id)
         self.set_step_sim(not self._in_realtime_mode)
 
     def __del__(self):
         """Clean up connection if not already done."""
-        if self._client >= 0:
+        if self._client_id >= 0:
             try:
-                pybullet.disconnect(physicsClientId=self._client)
-                self._client = -1
+                pybullet.disconnect(physicsClientId=self._client_id)
+                self._client_id = -1
             except pybullet.error:
                 pass
 
@@ -103,9 +101,9 @@ class BulletClient:
         attribute = getattr(pybullet, name)
         if inspect.isbuiltin(attribute):
             attribute = functools.partial(attribute,
-                                          physicsClientId=self._client)
+                                          physicsClientId=self._client_id)
         if name == "disconnect":
-            self._client = -1
+            self._client_id = -1
         return attribute
 
     def get_client_id(self):
@@ -116,7 +114,7 @@ class BulletClient:
             int: pybullet client id.
 
         """
-        return self._client
+        return self._client_id
 
     def set_step_sim(self, step_mode=True):
         """

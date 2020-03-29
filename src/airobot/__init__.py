@@ -129,8 +129,6 @@ class Robot:
                 configs.EETOOL.CLASS = configs.EETOOL.CLASS + class_suffix
             arm_cfg['eetool_cfg'] = eetool_cfg
 
-            import pdb
-            pdb.set_trace()
             self.arm = arm_class(configs, **arm_cfg)
         if configs.HAS_BASE and use_base:
             class_name = configs.BASE.CLASS + class_suffix

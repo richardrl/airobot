@@ -155,6 +155,8 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         if not self._is_activated:
             raise RuntimeError('Call activate function first!')
         jnt_id = self.jnt_to_id[self.jnt_names[0]]
+        import pdb
+        pdb.set_trace()
         pos = self._pb.getJointState(self.robot_id, jnt_id)[0]
         return pos
 
