@@ -4,12 +4,13 @@ import numpy as np
 from airobot import Robot
 from airobot import log_warn
 from airobot.utils.common import euler2quat
-
+import faulthandler
 
 def main():
     """
     This function shows an example of block stacking.
     """
+    faulthandler.enable()
     np.set_printoptions(precision=4, suppress=True)
     robot = Robot('ur5e_2f140')
     success = robot.arm.go_home()
@@ -38,6 +39,7 @@ def main():
     robot.arm.move_ee_xyz(move_dir, eef_step=eef_step)
     move_dir = np.zeros(3)
     move_dir[2] = obj_pos[2] - robot.arm.get_ee_pose()[0][2]
+
     robot.arm.move_ee_xyz(move_dir, eef_step=eef_step)
     robot.arm.eetool.close(wait=False)
     robot.arm.move_ee_xyz([0, 0, 0.3], eef_step=eef_step)

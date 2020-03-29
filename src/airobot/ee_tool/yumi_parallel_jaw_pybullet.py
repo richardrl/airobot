@@ -52,7 +52,7 @@ class YumiParallelJawPybullet(EndEffectorTool):
 
 
         """
-        self.robot_id = robot_id
+        self.robot_body_id = robot_id
         self.jnt_to_id = jnt_to_id
         self.gripper_jnt_ids = [
             self.jnt_to_id[jnt] for jnt in self.jnt_names
@@ -116,7 +116,7 @@ class YumiParallelJawPybullet(EndEffectorTool):
             min(self.gripper_open_angle, self.gripper_close_angle),
             max(self.gripper_open_angle, self.gripper_close_angle))
         jnt_id = self.jnt_to_id[joint_name]
-        self._pb.setJointMotorControl2(self.robot_id,
+        self._pb.setJointMotorControl2(self.robot_body_id,
                                        jnt_id,
                                        self._pb.POSITION_CONTROL,
                                        targetPosition=tgt_pos,
@@ -146,7 +146,7 @@ class YumiParallelJawPybullet(EndEffectorTool):
         if not self._is_activated:
             raise RuntimeError('Call activate function first!')
         jnt_id = self.jnt_to_id[self.jnt_names[0]]
-        pos = self._pb.getJointState(self.robot_id, jnt_id)[0]
+        pos = self._pb.getJointState(self.robot_body_id, jnt_id)[0]
         return pos
 
     def get_vel(self):
@@ -159,7 +159,7 @@ class YumiParallelJawPybullet(EndEffectorTool):
         if not self._is_activated:
             raise RuntimeError('Call activate function first!')
         jnt_id = self.jnt_to_id[self.jnt_names[0]]
-        vel = self._pb.getJointState(self.robot_id, jnt_id)[1]
+        vel = self._pb.getJointState(self.robot_body_id, jnt_id)[1]
         return vel
 
     def disable_gripper_self_collision(self):
@@ -172,8 +172,8 @@ class YumiParallelJawPybullet(EndEffectorTool):
             for j in range(i + 1, len(self.jnt_names)):
                 jnt_idx1 = self.jnt_to_id[self.jnt_names[i]]
                 jnt_idx2 = self.jnt_to_id[self.jnt_names[j]]
-                self._pb.setCollisionFilterPair(self.robot_id,
-                                                self.robot_id,
+                self._pb.setCollisionFilterPair(self.robot_body_id,
+                                                self.robot_body_id,
                                                 jnt_idx1,
                                                 jnt_idx2,
                                                 enableCollision=0)
@@ -205,7 +205,7 @@ class YumiParallelJawPybullet(EndEffectorTool):
             gripper_pos = self.get_pos()
         gripper_poss = self._mimic_gripper(gripper_pos)[1:]
         gripper_vels = [0.0] * len(max_torques)
-        self._pb.setJointMotorControlArray(self.robot_id,
+        self._pb.setJointMotorControlArray(self.robot_body_id,
                                            self.gripper_jnt_ids[1:],
                                            self._pb.POSITION_CONTROL,
                                            targetPositions=gripper_poss,

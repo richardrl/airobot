@@ -53,17 +53,17 @@ class Robotiq2F140Pybullet(EndEffectorTool):
 
         """
 
-        self.robot_id = robot_id
+        self.robot_body_id = robot_id
         self.jnt_to_id = jnt_to_id
         self.gripper_jnt_ids = [
             self.jnt_to_id[jnt] for jnt in self.jnt_names
         ]
-        self._pb.changeDynamics(self.robot_id,
+        self._pb.changeDynamics(self.robot_body_id,
                                 self.jnt_to_id['left_inner_finger_pad_joint'],
                                 lateralFriction=2.0,
                                 spinningFriction=1.0,
                                 rollingFriction=1.0)
-        self._pb.changeDynamics(self.robot_id,
+        self._pb.changeDynamics(self.robot_body_id,
                                 self.jnt_to_id['right_inner_finger_pad_joint'],
                                 lateralFriction=2.0,
                                 spinningFriction=1.0,
@@ -75,9 +75,13 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         if not self._mthread_started:
             self._mthread_started = True
             # gripper thread
-            self._th_gripper = threading.Thread(target=self._th_mimic_gripper)
-            self._th_gripper.daemon = True
-            self._th_gripper.start()
+            import multiprocessing
+
+            # self._th_gripper = threading.Thread(target=self._th_mimic_gripper)
+            # self._th_gripper = multiprocessing.Process(target=self._th_mimic_gripper)
+
+            # self._th_gripper.daemon = True
+            # self._th_gripper.start()
         else:
             return
 
@@ -125,10 +129,15 @@ class Robotiq2F140Pybullet(EndEffectorTool):
                                self.gripper_open_angle,
                                self.gripper_close_angle)
         jnt_id = self.jnt_to_id[joint_name]
-        self._pb.setJointMotorControl2(self.robot_id,
+        self._pb.setJointMotorControl2(self.robot_body_id,
                                        jnt_id,
                                        self._pb.POSITION_CONTROL,
                                        targetPosition=tgt_pos,
+                                       force=self._max_torque)
+        self._pb.setJointMotorControl2(self.robot_body_id,
+                                       self.jnt_to_id["right_outer_knuckle_joint"],
+                                       self._pb.POSITION_CONTROL,
+                                       targetPosition=-tgt_pos,
                                        force=self._max_torque)
         if not self._pb.in_realtime_mode():
             self._set_rest_joints(tgt_pos)
@@ -155,9 +164,8 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         if not self._is_activated:
             raise RuntimeError('Call activate function first!')
         jnt_id = self.jnt_to_id[self.jnt_names[0]]
-        import pdb
-        pdb.set_trace()
-        pos = self._pb.getJointState(self.robot_id, jnt_id)[0]
+
+        pos = self._pb.getJointState(self.robot_body_id, jnt_id)[0]
         return pos
 
     def get_vel(self):
@@ -170,7 +178,7 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         if not self._is_activated:
             raise RuntimeError('Call activate function first!')
         jnt_id = self.jnt_to_id[self.jnt_names[0]]
-        vel = self._pb.getJointState(self.robot_id, jnt_id)[1]
+        vel = self._pb.getJointState(self.robot_body_id, jnt_id)[1]
         return vel
 
     def disable_gripper_self_collision(self):
@@ -183,8 +191,8 @@ class Robotiq2F140Pybullet(EndEffectorTool):
             for j in range(i + 1, len(self.jnt_names)):
                 jnt_idx1 = self.jnt_to_id[self.jnt_names[i]]
                 jnt_idx2 = self.jnt_to_id[self.jnt_names[j]]
-                self._pb.setCollisionFilterPair(self.robot_id,
-                                                self.robot_id,
+                self._pb.setCollisionFilterPair(self.robot_body_id,
+                                                self.robot_body_id,
                                                 jnt_idx1,
                                                 jnt_idx2,
                                                 enableCollision=0)
@@ -210,13 +218,14 @@ class Robotiq2F140Pybullet(EndEffectorTool):
             time.sleep(0.005)
 
     def _set_rest_joints(self, gripper_pos=None):
+        print("Setting rest joints")
         max_torq = self._max_torque
         max_torques = [max_torq] * (len(self.jnt_names) - 1)
         if gripper_pos is None:
             gripper_pos = self.get_pos()
         gripper_poss = self._mimic_gripper(gripper_pos)[1:]
         gripper_vels = [0.0] * len(max_torques)
-        self._pb.setJointMotorControlArray(self.robot_id,
+        self._pb.setJointMotorControlArray(self.robot_body_id,
                                            self.gripper_jnt_ids[1:],
                                            self._pb.POSITION_CONTROL,
                                            targetPositions=gripper_poss,
@@ -234,3 +243,23 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         Activate the gripper.
         """
         self._is_activated = True
+
+        # c = self._pb.createConstraint(self.robot_body_id,
+        #                self.jnt_to_id["finger_joint"],
+        #                       self.robot_body_id,
+        #               self.jnt_to_id["right_outer_knuckle_joint"],
+        #                jointType=self._pb.JOINT_GEAR,
+        #                jointAxis=[1, 1, 1],
+        #                parentFramePosition=[0, -.013, 0],
+        #                childFramePosition=[0, 0, 0])
+        # self._pb.changeConstraint(c, gearRatio=1, maxForce=10)
+
+        # c = self._pb.createConstraint(self.robot_body_id,
+        #                self.jnt_to_id["right_inner_knuckle_joint"],
+        #                       self.robot_body_id,
+        #               self.jnt_to_id["left_inner_knuckle_joint"],
+        #                jointType=self._pb.JOINT_PRISMATIC,
+        #                jointAxis=[0, 1, 0],
+        #                parentFramePosition=[0, -.013, 0],
+        #                childFramePosition=[0, 0, 0])
+        # self._pb.changeConstraint(c, gearRatio=-.01, maxForce=10000)

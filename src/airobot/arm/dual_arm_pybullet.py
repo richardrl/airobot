@@ -52,7 +52,7 @@ class DualArmPybullet(ARM):
 
         self._np_random, _ = self._seed(seed)
 
-        self.robot_id = None
+        self.robot_body_id = None
         self.arms = {}
 
         self._init_consts()
@@ -71,7 +71,7 @@ class DualArmPybullet(ARM):
         self.arms[self.configs.ARM.LEFT.ARM.NAME] = left_arm
 
         for arm in self.arms.values():
-            arm.robot_id = self.robot_id
+            arm.robot_id = self.robot_body_id
             arm._build_jnt_id()
 
     def go_home(self, arm=None):
@@ -127,7 +127,7 @@ class DualArmPybullet(ARM):
                                  'elements if arm is not provided'
                                  % self.dual_arm_dof)
             tgt_pos = position
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.POSITION_CONTROL,
                                                targetPositions=tgt_pos,
@@ -184,7 +184,7 @@ class DualArmPybullet(ARM):
                                  'elements if arm is not provided'
                                  % self.dual_arm_dof)
             tgt_vel = velocity
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.VELOCITY_CONTROL,
                                                targetVelocities=tgt_vel,
@@ -252,7 +252,7 @@ class DualArmPybullet(ARM):
                 raise ValueError('If arm is not specified, '
                                  'Joint torques should contain'
                                  ' %d elements' % self.dual_arm_dof)
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.TORQUE_CONTROL,
                                                forces=torque)
@@ -396,12 +396,12 @@ class DualArmPybullet(ARM):
               (shape: :math:`[DOF]`).
         """
         if joint_name is None:
-            states = self._pb.getJointStates(self.robot_id,
+            states = self._pb.getJointStates(self.robot_body_id,
                                              self.arm_jnt_ids)
             pos = [state[0] for state in states]
         else:
             jnt_id = self.jnt_to_id[joint_name]
-            pos = self._pb.getJointState(self.robot_id,
+            pos = self._pb.getJointState(self.robot_body_id,
                                          jnt_id)[0]
         return pos
 
@@ -422,12 +422,12 @@ class DualArmPybullet(ARM):
               (shape: :math:`[DOF]`).
         """
         if joint_name is None:
-            states = self._pb.getJointStates(self.robot_id,
+            states = self._pb.getJointStates(self.robot_body_id,
                                              self.arm_jnt_ids)
             vel = [state[1] for state in states]
         else:
             jnt_id = self.jnt_to_id[joint_name]
-            vel = self._pb.getJointState(self.robot_id,
+            vel = self._pb.getJointState(self.robot_body_id,
                                          jnt_id)[1]
         return vel
 
@@ -453,13 +453,13 @@ class DualArmPybullet(ARM):
               (shape: :math:`[DOF]`).
         """
         if joint_name is None:
-            states = self._pb.getJointStates(self.robot_id,
+            states = self._pb.getJointStates(self.robot_body_id,
                                              self.arm_jnt_ids)
             # state[3] is appliedJointMotorTorque
             torque = [state[3] for state in states]
         else:
             jnt_id = self.jnt_to_id[joint_name]
-            torque = self._pb.getJointState(self.robot_id,
+            torque = self._pb.getJointState(self.robot_body_id,
                                             jnt_id)[3]
         return torque
 
@@ -605,8 +605,8 @@ class DualArmPybullet(ARM):
         """
         self.jnt_to_id = {}
         self.non_fixed_jnt_names = []
-        for i in range(self._pb.getNumJoints(self.robot_id)):
-            info = self._pb.getJointInfo(self.robot_id, i)
+        for i in range(self._pb.getNumJoints(self.robot_body_id)):
+            info = self._pb.getJointInfo(self.robot_body_id, i)
             jnt_name = info[1].decode('UTF-8')
             self.jnt_to_id[jnt_name] = info[0]
             if info[2] != self._pb.JOINT_FIXED:

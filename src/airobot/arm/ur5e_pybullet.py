@@ -64,19 +64,19 @@ class UR5ePybullet(SingleArmPybullet):
         self.robot_base_ori = arutil.euler2quat(robot_base_ori).tolist()
         if self._self_collision:
             colli_flag = self._pb.URDF_USE_SELF_COLLISION
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               self.robot_base_pos,
                                               self.robot_base_ori,
                                               flags=colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               self.robot_base_pos,
                                               self.robot_base_ori)
         self._build_jnt_id()
         self.set_visual_shape()
         self._pb.configureDebugVisualizer(self._pb.COV_ENABLE_RENDERING, 1)
         if hasattr(self, 'eetool'):
-            self.eetool.feed_robot_info(self.robot_id, self.jnt_to_id)
+            self.eetool.feed_robot_info(self.robot_body_id, self.jnt_to_id)
             self.eetool.activate()
             if self._self_collision:
                 # weird behavior occurs on the gripper
@@ -90,24 +90,24 @@ class UR5ePybullet(SingleArmPybullet):
         color1 = [0.25, 0.25, 0.25, 1]
         color2 = [0.95, 0.95, 0.95, 1]
         jnt_id = self.jnt_to_id['base-base_link_fixed_joint']
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    jnt_id,
                                    rgbaColor=color1)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['shoulder_pan_joint'],
                                    rgbaColor=color2)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['shoulder_lift_joint'],
                                    rgbaColor=color1)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['elbow_joint'],
                                    rgbaColor=color2)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['wrist_1_joint'],
                                    rgbaColor=color1)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['wrist_2_joint'],
                                    rgbaColor=color2)
-        self._pb.changeVisualShape(self.robot_id,
+        self._pb.changeVisualShape(self.robot_body_id,
                                    self.jnt_to_id['wrist_3_joint'],
                                    rgbaColor=color1)

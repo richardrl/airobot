@@ -77,7 +77,7 @@ class CompliantYumiArm(SingleArmPybullet):
                                  'elements if the joint_name'
                                  ' is not provided' % self.arm_dof)
             tgt_pos = position
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.POSITION_CONTROL,
                                                targetPositions=tgt_pos,
@@ -91,7 +91,7 @@ class CompliantYumiArm(SingleArmPybullet):
                 arm_jnt_idx = self.arm_jnt_names.index(joint_name)
                 max_torque = self._max_torques[arm_jnt_idx]
                 jnt_id = self.jnt_to_id[joint_name]
-            self._pb.setJointMotorControl2(self.robot_id,
+            self._pb.setJointMotorControl2(self.robot_body_id,
                                            jnt_id,
                                            self._pb.POSITION_CONTROL,
                                            targetPosition=tgt_pos,
@@ -135,7 +135,7 @@ class CompliantYumiArm(SingleArmPybullet):
                                  'if the joint_name is not '
                                  'provided' % self.arm_dof)
             tgt_vel = velocity
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.VELOCITY_CONTROL,
                                                targetVelocities=tgt_vel,
@@ -149,7 +149,7 @@ class CompliantYumiArm(SingleArmPybullet):
                 arm_jnt_idx = self.arm_jnt_names.index(joint_name)
                 max_torque = self._max_torques[arm_jnt_idx]
                 jnt_id = self.jnt_to_id[joint_name]
-            self._pb.setJointMotorControl2(self.robot_id,
+            self._pb.setJointMotorControl2(self.robot_body_id,
                                            jnt_id,
                                            self._pb.VELOCITY_CONTROL,
                                            targetVelocity=tgt_vel,
@@ -202,7 +202,7 @@ class CompliantYumiArm(SingleArmPybullet):
             if len(torque) != self.arm_dof:
                 raise ValueError('Joint torques should contain'
                                  ' %d elements' % self.arm_dof)
-            self._pb.setJointMotorControlArray(self.robot_id,
+            self._pb.setJointMotorControlArray(self.robot_body_id,
                                                self.arm_jnt_ids,
                                                self._pb.TORQUE_CONTROL,
                                                forces=torque)
@@ -211,7 +211,7 @@ class CompliantYumiArm(SingleArmPybullet):
                 raise ValueError('Only torque control on'
                                  ' the arm is supported!')
             jnt_id = self.jnt_to_id[joint_name]
-            self._pb.setJointMotorControl2(self.robot_id,
+            self._pb.setJointMotorControl2(self.robot_body_id,
                                            jnt_id,
                                            self._pb.TORQUE_CONTROL,
                                            force=torque)
@@ -223,7 +223,7 @@ class CompliantYumiArm(SingleArmPybullet):
         Regulate compliant/spring like joints about nominal position.
         """
         self._pb.setJointMotorControlArray(
-            self.robot_id,
+            self.robot_body_id,
             self.comp_jnt_ids,
             self._pb.POSITION_CONTROL,
             targetPositions=[0.0] * len(self.comp_jnt_names),
@@ -298,12 +298,12 @@ class YumiPalmsPybullet(DualArmPybullet):
         yumi_ori = arutil.euler2quat(self.configs.ARM.PYBULLET_RESET_ORI)
         if self._self_collision:
             colli_flag = {'flags': self._pb.URDF_USE_SELF_COLLISION}
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos,
                                               yumi_ori,
                                               **colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos, yumi_ori)
 
         self._build_jnt_id()
@@ -325,6 +325,6 @@ class YumiPalmsPybullet(DualArmPybullet):
         self.arms[self.configs.ARM.LEFT.ARM.NAME] = left_arm
 
         for arm in self.arms.values():
-            arm.robot_id = self.robot_id
+            arm.robot_id = self.robot_body_id
             arm._build_jnt_id()
             arm._init_compliant_consts()

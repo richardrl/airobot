@@ -67,11 +67,15 @@ class BulletClient:
         self._realtime_lock = threading.RLock()
         if connection_mode is None:
             self._client_id = pybullet.connect(pybullet.SHARED_MEMORY)
+            print("Client ID" + str(self._client_id))
+
             if self._client_id >= 0:
                 return
             else:
                 connection_mode = pybullet.DIRECT
         self._client_id = pybullet.connect(connection_mode)
+        print("Client ID" + str(self._client_id))
+
         is_linux = platform.system() == 'Linux'
         if connection_mode == pybullet.DIRECT and is_linux and opengl_render:
             # # using the eglRendererPlugin (hardware OpenGL acceleration)
@@ -85,6 +89,7 @@ class BulletClient:
         self._gui_mode = connection_mode == pybullet.GUI
         pybullet.setGravity(0, 0, GRAVITY_CONST,
                             physicsClientId=self._client_id)
+        print("Client ID" + str(self._client_id))
         self.set_step_sim(not self._in_realtime_mode)
 
     def __del__(self):

@@ -113,18 +113,18 @@ class Robot:
 
         class_suffix = 'Pybullet' if pybullet else 'Real'
         if configs.HAS_ARM and use_arm:
-            # if configs.ARM.CLASS == 'ARM':
-            #     class_name = configs.ARM.CLASS
-            # else:
-            class_name = configs.ARM.CLASS + class_suffix
+            if configs.ARM.CLASS == 'ARM':
+                class_name = configs.ARM.CLASS
+            else:
+                class_name = configs.ARM.CLASS + class_suffix
 
             from .arm import class_names_to_paths as arm_class_names_to_paths
             arm_class = load_class_from_path(class_name,
                                              arm_class_names_to_paths[class_name])
-            if use_eetool:
-                configs.HAS_EETOOL = True
-            else:
+            if not use_eetool:
                 configs.HAS_EETOOL = False
+            # else:
+            #     configs.HAS_EETOOL = False
             if configs.HAS_EETOOL:
                 configs.EETOOL.CLASS = configs.EETOOL.CLASS + class_suffix
             arm_cfg['eetool_cfg'] = eetool_cfg

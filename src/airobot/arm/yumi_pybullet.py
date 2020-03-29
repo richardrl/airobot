@@ -64,12 +64,12 @@ class YumiPybullet(DualArmPybullet):
         yumi_ori = arutil.euler2quat(self.configs.ARM.PYBULLET_RESET_ORI)
         if self._self_collision:
             colli_flag = {'flags': self._pb.URDF_USE_SELF_COLLISION}
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos,
                                               yumi_ori,
                                               **colli_flag)
         else:
-            self.robot_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
+            self.robot_body_id = self._pb.loadURDF(self.configs.PYBULLET_URDF,
                                               yumi_pos, yumi_ori)
 
         self._build_jnt_id()
@@ -79,7 +79,7 @@ class YumiPybullet(DualArmPybullet):
 
         for arm in self.arms.values():
             if hasattr(arm, 'eetool'):
-                arm.eetool.feed_robot_info(self.robot_id, self.jnt_to_id)
+                arm.eetool.feed_robot_info(self.robot_body_id, self.jnt_to_id)
                 arm.eetool.activate()
                 if arm._self_collision:
                     arm.eetool.disable_gripper_self_collision()
