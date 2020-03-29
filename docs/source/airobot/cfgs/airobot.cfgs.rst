@@ -1,4 +1,4 @@
-airobot.cfgs
+airobot.configs
 ====================
 
 .. toctree::

@@ -71,9 +71,9 @@ class Robot:
             eetool_cfg = {}
 
         root_path = os.path.dirname(os.path.realpath(__file__))
-        cfgs_root_path = os.path.join(root_path, 'configs')
+        configs_root_path = os.path.join(root_path, 'configs')
         robot_pool = []
-        for f in os.listdir(cfgs_root_path):
+        for f in os.listdir(configs_root_path):
             if f.endswith('_cfg.py'):
                 robot_pool.append(f[:-len('_cfg.py')])
 
@@ -129,6 +129,8 @@ class Robot:
                 configs.EETOOL.CLASS = configs.EETOOL.CLASS + class_suffix
             arm_cfg['eetool_cfg'] = eetool_cfg
 
+            import pdb
+            pdb.set_trace()
             self.arm = arm_class(configs, **arm_cfg)
         if configs.HAS_BASE and use_base:
             class_name = configs.BASE.CLASS + class_suffix

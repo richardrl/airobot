@@ -6,4 +6,4 @@ airobot.configs.yumi\_grippers\_cfg
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../src/airobot/cfgs/yumi_grippers_cfg.py
+.. literalinclude:: ../../../../src/airobot/configs/yumi_grippers_cfg.py

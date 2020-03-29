@@ -12,11 +12,11 @@ class YumiParallelJawPybullet(EndEffectorTool):
     parallel jaw gripper.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the gripper
+        configs (YACS CfgNode): configurations for the gripper
         pb_client (BulletClient): pybullet client.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the gripper.
+        configs (YACS CfgNode): configurations for the gripper.
         gripper_close_angle (float): position value corresponding to the
             fully closed position of the gripper.
         gripper_open_angle (float): position value corresponding to the
@@ -27,9 +27,9 @@ class YumiParallelJawPybullet(EndEffectorTool):
         jnt_to_id (dict): mapping from the joint name to joint id.
     """
 
-    def __init__(self, cfgs, pb_client):
+    def __init__(self, configs, pb_client):
         self._pb = pb_client
-        super(YumiParallelJawPybullet, self).__init__(configs=cfgs)
+        super(YumiParallelJawPybullet, self).__init__(configs=configs)
         self._gripper_mimic_coeff = [1, 1]
 
         self.jnt_names = self.configs.EETOOL.JOINT_NAMES

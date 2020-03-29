@@ -38,7 +38,7 @@ class UR5eReal(SingleArmROS):
     A Class for interfacing with real UR5e robot.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         moveit_planner (str): motion planning algorithm.
         eetool_cfg (dict): arguments to pass in the constructor
             of the end effector tool class.
@@ -59,13 +59,13 @@ class UR5eReal(SingleArmROS):
             shape: :math:`[4,]` ([x, y, z, w]).
     """
 
-    def __init__(self, cfgs,
+    def __init__(self, configs,
                  moveit_planner='RRTstarkConfigDefault',
                  eetool_cfg=None,
                  wrist_cam=True,
                  rtde=False,
                  ):
-        super(UR5eReal, self).__init__(configs=cfgs,
+        super(UR5eReal, self).__init__(configs=configs,
                                        moveit_planner=moveit_planner,
                                        eetool_cfg=eetool_cfg)
         self._has_wrist_cam = wrist_cam
@@ -84,7 +84,7 @@ class UR5eReal(SingleArmROS):
 
         self._tcp_wrench_queue = deque([], 500) # Tool center point wrench
 
-        if self.cfgs['HAS_EETOOL'] and not rtde:
+        if self.configs['HAS_EETOOL'] and not rtde:
             rospy.Subscriber(self.configs.EETOOL.TCP_WRENCH_TOPIC,
                          WrenchStamped,
                          self._callback_tcp_wrench)
@@ -353,7 +353,7 @@ class UR5eReal(SingleArmROS):
                 # movel moves linear in tool space, may go through singularity
                 # orientation in movel is specified as a rotation vector!
                 # not euler angles!
-                prog = 'movel(p[%f, %f, %f, %f, %f, %f], a=%f, v=%f, r=%f)' % (
+                prog = 'movel(pybullet[%f, %f, %f, %f, %f, %f], a=%f, v=%f, r=%f)' % (
                     ee_pos[0],
                     ee_pos[1],
                     ee_pos[2],
@@ -534,7 +534,7 @@ class UR5eReal(SingleArmROS):
         Internal method to send a URScript command to the robot so that
         it updates it tool center point variable to match the URDF.
         """
-        tool_offset_prog = 'set_tcp(p[%f, %f, %f, %f, %f, %f])' % (
+        tool_offset_prog = 'set_tcp(pybullet[%f, %f, %f, %f, %f, %f])' % (
             self.gripper_tip_pos[0],
             self.gripper_tip_pos[1],
             self.gripper_tip_pos[2],

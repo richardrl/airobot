@@ -6,4 +6,4 @@ airobot.configs.yumi\_palms\_cfg
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../src/airobot/cfgs/yumi_palms_cfg.py
+.. literalinclude:: ../../../../src/airobot/configs/yumi_palms_cfg.py

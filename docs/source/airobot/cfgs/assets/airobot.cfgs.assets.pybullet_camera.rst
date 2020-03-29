@@ -6,4 +6,4 @@ airobot.configs.assets.pybullet\_camera
     :undoc-members:
     :show-inheritance:
     
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/pybullet_camera.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/pybullet_camera.py

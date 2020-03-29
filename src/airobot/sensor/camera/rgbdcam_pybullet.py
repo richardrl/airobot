@@ -8,7 +8,7 @@ class RGBDCameraPybullet(RGBDCamera):
     RGBD Camera in Pybullet.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the camera.
+        configs (YACS CfgNode): configurations for the camera.
 
     Attributes:
         view_matrix (np.ndarray): view matrix of opengl
@@ -17,9 +17,9 @@ class RGBDCameraPybullet(RGBDCamera):
             opengl camera (shape: :math:`[4, 4]`).
     """
 
-    def __init__(self, cfgs, pb_client):
+    def __init__(self, configs, pb_client):
         self._pb = pb_client
-        super(RGBDCameraPybullet, self).__init__(configs=cfgs)
+        super(RGBDCameraPybullet, self).__init__(configs=configs)
         self.view_matrix = None
         self.proj_matrix = None
         self.depth_scale = 1

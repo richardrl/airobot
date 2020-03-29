@@ -283,7 +283,7 @@ Date:   Mon Jan 20 10:47:04 2020 -0500
 Author: anthonysimeonov <asimeono@mit.edu>
 Date:   Mon Jan 20 10:46:51 2020 -0500
 
-    added ur5e with stick ee to cfgs and urdfs, and updated yumi palm urdf with smaller link masses and new joint torques
+    added ur5e with stick ee to configs and urdfs, and updated yumi palm urdf with smaller link masses and new joint torques
 
 [33mcommit d4fb828dd5e85a0c2eaf8435662e7df08c385213[m
 Author: Tao <15166943+taochenshh@users.noreply.github.com>
@@ -313,7 +313,7 @@ Date:   Fri Jan 17 11:48:41 2020 -0500
 Author: anthonysimeonov <asimeono@mit.edu>
 Date:   Fri Jan 17 11:02:23 2020 -0500
 
-    modified yumi cfg max torques and updated cfgs docs
+    modified yumi cfg max torques and updated configs docs
 
 [33mcommit e32cf42e3ef0e6e2675df898f6bb805d142715ff[m
 Author: anthonysimeonov <asimeono@mit.edu>
@@ -413,7 +413,7 @@ Date:   Wed Jan 15 12:43:42 2020 -0500
 Author: anthonysimeonov <asimeono@mit.edu>
 Date:   Wed Jan 15 11:57:29 2020 -0500
 
-    updated docs with yumi arm, end effector, and cfgs
+    updated docs with yumi arm, end effector, and configs
 
 [33mcommit 2c1b4b5e56a18f3562b219d3bc6a40298828592f[m
 Author: taochenshh <taochen904@gmail.com>
@@ -1975,7 +1975,7 @@ Date:   Thu Sep 26 11:23:45 2019 -0400
 Author: taochenshh <chentao904@163.com>
 Date:   Wed Sep 25 20:51:41 2019 -0400
 
-    add more cfgs
+    add more configs
 
 [33mcommit 453c0582e4c348d0abbf98320d741f582019a0bf[m
 Author: taochenshh <chentao904@163.com>

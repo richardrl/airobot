@@ -31,7 +31,7 @@ class URRobotGym:
         self.cams = []
         pb_client = self.robot.pb_client
         for i in range(2):
-            self.cams.append(RGBDCameraPybullet(cfgs=self._camera_cfgs(),
+            self.cams.append(RGBDCameraPybullet(configs=self._camera_configs(),
                                                 pb_client=pb_client))
         self._setup_cameras()
         self.reset()
@@ -112,7 +112,7 @@ class URRobotGym:
             self.robot.arm.eetool.set_pos(gripper_ang)
             self.robot.pb_client.stepSimulation()
 
-    def _camera_cfgs(self):
+    def _camera_configs(self):
         _C = CN()
         _C.ZNEAR = 0.01
         _C.ZFAR = 10

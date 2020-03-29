@@ -17,7 +17,7 @@ class YumiPybullet(DualArmPybullet):
     separate functionality for both arms.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         pb_client (BulletClient): pybullet client.
         seed (int): random seed.
         self_collision (bool): enable self_collision or
@@ -32,22 +32,22 @@ class YumiPybullet(DualArmPybullet):
 
     """
 
-    def __init__(self, cfgs, pb_client, seed=None,
+    def __init__(self, configs, pb_client, seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(YumiPybullet, self).__init__(configs=cfgs,
+        super(YumiPybullet, self).__init__(configs=configs,
                                            pb_client=pb_client,
                                            seed=seed,
                                            self_collision=self_collision,
                                            eetool_cfg=eetool_cfg)
-        right_cfg = cfgs.ARM.RIGHT
-        left_cfg = cfgs.ARM.LEFT
-        self.right_arm = SingleArmPybullet(cfgs=right_cfg,
+        right_cfg = configs.ARM.RIGHT
+        left_cfg = configs.ARM.LEFT
+        self.right_arm = SingleArmPybullet(configs=right_cfg,
                                            pb_client=pb_client,
                                            seed=seed,
                                            self_collision=self_collision,
                                            eetool_cfg=eetool_cfg)
-        self.left_arm = SingleArmPybullet(cfgs=left_cfg,
+        self.left_arm = SingleArmPybullet(configs=left_cfg,
                                           pb_client=pb_client,
                                           seed=seed,
                                           self_collision=self_collision,

@@ -6,4 +6,4 @@ airobot.configs.assets.robotiq2f140
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/robotiq2f140.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/robotiq2f140.py

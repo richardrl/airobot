@@ -6,4 +6,4 @@ airobot.configs.assets.yumi\_parallel\_jaw
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/yumi_parallel_jaw.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/yumi_parallel_jaw.py

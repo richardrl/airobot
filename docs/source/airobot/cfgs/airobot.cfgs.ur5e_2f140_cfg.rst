@@ -6,4 +6,4 @@ airobot.configs.ur5e\_2f140\_cfg
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../src/airobot/cfgs/ur5e_2f140_cfg.py
+.. literalinclude:: ../../../../src/airobot/configs/ur5e_2f140_cfg.py

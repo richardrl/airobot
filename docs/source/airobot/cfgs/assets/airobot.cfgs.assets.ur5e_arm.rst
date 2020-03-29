@@ -6,4 +6,4 @@ airobot.configs.assets.ur5e\_arm
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/ur5e_arm.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/ur5e_arm.py

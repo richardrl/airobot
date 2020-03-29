@@ -6,4 +6,4 @@ airobot.configs.assets.default\_configs
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/default_configs.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/default_configs.py

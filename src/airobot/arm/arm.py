@@ -10,27 +10,27 @@ class ARM(object):
     Base class for robots.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the robot
+        configs (YACS CfgNode): configurations for the robot
         eetool_cfg (dict): arguments to pass in the constructor
             of the end effector tool class. Defaults to None
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the robot
+        configs (YACS CfgNode): configurations for the robot
         eetool (EndEffectorTool): end effector tool
     """
 
-    def __init__(self, cfgs, eetool_cfg=None):
-        self.cfgs = cfgs
+    def __init__(self, configs, eetool_cfg=None):
+        self.configs = configs
         # import pdb
         # pdb.set_trace()
-        if cfgs.HAS_EETOOL:
+        if configs.HAS_EETOOL:
             if eetool_cfg is None:
                 eetool_cfg = {}
-            cls_name = cfgs.EETOOL.CLASS
+            cls_name = configs.EETOOL.CLASS
             from airobot.ee_tool import cls_name_to_path as ee_cls_name_to_path
             eetool_calss = load_class_from_path(cls_name,
                                                 ee_cls_name_to_path[cls_name])
-            self.eetool = eetool_calss(cfgs, **eetool_cfg)
+            self.eetool = eetool_calss(configs, **eetool_cfg)
 
     def go_home(self):
         """

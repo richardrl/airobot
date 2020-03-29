@@ -6,4 +6,4 @@ airobot.configs.assets.yumi\_arm
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../../src/airobot/cfgs/assets/yumi_arm.py
+.. literalinclude:: ../../../../../src/airobot/configs/assets/yumi_arm.py

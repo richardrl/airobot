@@ -6,4 +6,4 @@ airobot.configs.yumi\_cfg
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../src/airobot/cfgs/yumi_cfg.py
+.. literalinclude:: ../../../../src/airobot/configs/yumi_cfg.py

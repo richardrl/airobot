@@ -10,7 +10,7 @@ from numbers import Number
 
 import cv2
 import numpy as np
-import pybullet as p
+import pybullet
 import pybullet_data
 from airobot.utils.common import clamp
 
@@ -30,9 +30,10 @@ def create_pybullet_client(gui=True,
             RGB images.
     """
     if gui:
-        mode = p.GUI
+        mode = pybullet.GUI
     else:
-        mode = p.DIRECT
+        mode = pybullet.DIRECT
+
     pb_client = BulletClient(connection_mode=mode,
                              realtime=realtime,
                              opengl_render=opengl_render)
@@ -61,43 +62,45 @@ class BulletClient:
                  connection_mode=None,
                  realtime=False,
                  opengl_render=True):
+        import pdb
+        pdb.set_trace()
         self._in_realtime_mode = realtime
         self.opengl_render = opengl_render
         self._realtime_lock = threading.RLock()
         if connection_mode is None:
-            self._client = p.connect(p.SHARED_MEMORY)
+            self._client = pybullet.connect(pybullet.SHARED_MEMORY)
             if self._client >= 0:
                 return
             else:
-                connection_mode = p.DIRECT
-        self._client = p.connect(connection_mode)
+                connection_mode = pybullet.DIRECT
+        self._client = pybullet.connect(connection_mode)
         is_linux = platform.system() == 'Linux'
-        if connection_mode == p.DIRECT and is_linux and opengl_render:
+        if connection_mode == pybullet.DIRECT and is_linux and opengl_render:
             # # using the eglRendererPlugin (hardware OpenGL acceleration)
             egl = pkgutil.get_loader('eglRenderer')
             if egl:
-                p.loadPlugin(egl.get_filename(), "_eglRendererPlugin",
-                             physicsClientId=self._client)
+                pybullet.loadPlugin(egl.get_filename(), "_eglRendererPlugin",
+                                    physicsClientId=self._client)
             else:
-                p.loadPlugin("eglRendererPlugin",
-                             physicsClientId=self._client)
-        self._gui_mode = connection_mode == p.GUI
-        p.setGravity(0, 0, GRAVITY_CONST,
-                     physicsClientId=self._client)
+                pybullet.loadPlugin("eglRendererPlugin",
+                                    physicsClientId=self._client)
+        self._gui_mode = connection_mode == pybullet.GUI
+        pybullet.setGravity(0, 0, GRAVITY_CONST,
+                            physicsClientId=self._client)
         self.set_step_sim(not self._in_realtime_mode)
 
     def __del__(self):
         """Clean up connection if not already done."""
         if self._client >= 0:
             try:
-                p.disconnect(physicsClientId=self._client)
+                pybullet.disconnect(physicsClientId=self._client)
                 self._client = -1
-            except p.error:
+            except pybullet.error:
                 pass
 
     def __getattr__(self, name):
         """Inject the client id into Bullet functions."""
-        attribute = getattr(p, name)
+        attribute = getattr(pybullet, name)
         if inspect.isbuiltin(attribute):
             attribute = functools.partial(attribute,
                                           physicsClientId=self._client)
@@ -367,11 +370,11 @@ class BulletClient:
 
         """
         global GRAVITY_CONST
-        pb_shape_types = {'sphere': p.GEOM_SPHERE,
-                          'box': p.GEOM_BOX,
-                          'capsule': p.GEOM_CAPSULE,
-                          'cylinder': p.GEOM_CYLINDER,
-                          'mesh': p.GEOM_MESH}
+        pb_shape_types = {'sphere': pybullet.GEOM_SPHERE,
+                          'box': pybullet.GEOM_BOX,
+                          'capsule': pybullet.GEOM_CAPSULE,
+                          'cylinder': pybullet.GEOM_CYLINDER,
+                          'mesh': pybullet.GEOM_MESH}
         if shape_type not in pb_shape_types.keys():
             raise TypeError('The following shape type is not '
                             'supported: %s' % shape_type)
@@ -453,7 +456,7 @@ class BulletClient:
         visual_args['visualFramePosition'] = shift_pos
         visual_args['visualFrameOrientation'] = shift_ori
 
-        self.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 0)
+        self.configureDebugVisualizer(pybullet.COV_ENABLE_RENDERING, 0)
         vs_id = self.createVisualShape(**visual_args)
         cs_id = self.createCollisionShape(**collision_args)
         body_id = self.createMultiBody(baseMass=mass,
@@ -464,7 +467,7 @@ class BulletClient:
                                        basePosition=base_pos,
                                        baseOrientation=base_ori,
                                        **kwargs)
-        self.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 1)
+        self.configureDebugVisualizer(pybullet.COV_ENABLE_RENDERING, 1)
         self.setGravity(0, 0, GRAVITY_CONST)
         return body_id
 
@@ -524,10 +527,10 @@ class TextureModder:
         img = cv2.imread(texture_file)
         width = img.shape[1]
         height = img.shape[0]
-        tex_id = p.loadTexture(texture_file)
-        p.changeVisualShape(body_id, link_id,
-                            textureUniqueId=tex_id,
-                            physicsClientId=self._pb_id)
+        tex_id = pybullet.loadTexture(texture_file)
+        pybullet.changeVisualShape(body_id, link_id,
+                                   textureUniqueId=tex_id,
+                                   physicsClientId=self._pb_id)
         if body_id not in self.texture_dict:
             self.texture_dict[body_id] = {}
         self.texture_dict[body_id][link_id] = [tex_id, height, width]
@@ -636,8 +639,8 @@ class TextureModder:
                 is an empty list, then all links on the body will be excluded.
 
         """
-        p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 0,
-                                   physicsClientId=self._pb_id)
+        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_RENDERING, 0,
+                                          physicsClientId=self._pb_id)
         mode_to_func = {
             'all': self.rand_all,
             'rgb': self.rand_rgb,
@@ -645,7 +648,7 @@ class TextureModder:
             'gradient': self.rand_gradient,
             'texture': self.rand_texture,
         }
-        body_num = p.getNumBodies(physicsClientId=self._pb_id)
+        body_num = pybullet.getNumBodies(physicsClientId=self._pb_id)
         if exclude is None:
             sep_bodies = set()
         else:
@@ -655,16 +658,16 @@ class TextureModder:
                 continue
             if body_idx in sep_bodies and not exclude[body_idx]:
                 continue
-            num_jnts = p.getNumJoints(body_idx,
-                                      physicsClientId=self._pb_id)
+            num_jnts = pybullet.getNumJoints(body_idx,
+                                             physicsClientId=self._pb_id)
             # start from -1 for urdf that has no joint but one link
             start = -1 if num_jnts == 0 else 0
             for link_idx in range(start, num_jnts):
                 if body_idx in sep_bodies and link_idx in exclude[body_idx]:
                     continue
                 mode_to_func[mode](body_idx, link_idx)
-        p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 1,
-                                   physicsClientId=self._pb_id)
+        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_RENDERING, 1,
+                                          physicsClientId=self._pb_id)
 
     def set_rgba(self, body_id, link_id, rgba):
         """
@@ -677,8 +680,8 @@ class TextureModder:
                 (opacity of the color), (shape: :math:`[4,]`).
 
         """
-        p.changeVisualShape(body_id, link_id, rgbaColor=rgba,
-                            physicsClientId=self._pb_id)
+        pybullet.changeVisualShape(body_id, link_id, rgbaColor=rgba,
+                                   physicsClientId=self._pb_id)
 
     def set_gradient(self, body_id, link_id, rgb1, rgb2, vertical=True):
         """
@@ -712,11 +715,11 @@ class TextureModder:
                                   axis=0).flatten()
 
         new_color = new_color.astype(np.uint8)
-        p.changeTexture(tex_id,
-                        new_color,
-                        width,
-                        height,
-                        physicsClientId=self._pb_id)
+        pybullet.changeTexture(tex_id,
+                               new_color,
+                               width,
+                               height,
+                               physicsClientId=self._pb_id)
 
     def set_noise(self, body_id, link_id, rgb1, rgb2, fraction=0.9):
         """
@@ -743,11 +746,11 @@ class TextureModder:
         mask = np.random.uniform(size=(height, width)) < fraction
         new_color = np.tile(rgb1, (height, width, 1))
         new_color[mask, :] = rgb2
-        p.changeTexture(tex_id,
-                        new_color.flatten(),
-                        width,
-                        height,
-                        physicsClientId=self._pb_id)
+        pybullet.changeTexture(tex_id,
+                               new_color.flatten(),
+                               width,
+                               height,
+                               physicsClientId=self._pb_id)
 
     def whiten_materials(self, body_id=None, link_id=None):
         """
@@ -762,20 +765,20 @@ class TextureModder:
 
         """
         if body_id is None:
-            body_num = p.getNumBodies(physicsClientId=self._pb_id)
+            body_num = pybullet.getNumBodies(physicsClientId=self._pb_id)
             for body_idx in range(body_num):
                 if not self._check_body_exist(body_idx):
                     continue
-                num_jnts = p.getNumJoints(body_idx,
-                                          physicsClientId=self._pb_id)
+                num_jnts = pybullet.getNumJoints(body_idx,
+                                                 physicsClientId=self._pb_id)
                 # start from -1 for urdf that has no joint but one link
                 start = -1 if num_jnts == 0 else 0
                 for i in range(start, num_jnts):
                     self.set_rgba(body_idx, i, rgba=[1, 1, 1, 1])
         else:
             if link_id is None:
-                num_jnts = p.getNumJoints(body_id,
-                                          physicsClientId=self._pb_id)
+                num_jnts = pybullet.getNumJoints(body_id,
+                                                 physicsClientId=self._pb_id)
                 # start from -1 for urdf that has no joint but one link
                 start = -1 if num_jnts == 0 else 0
                 for i in range(start, num_jnts):
@@ -837,7 +840,7 @@ class TextureModder:
         """
         exist = True
         try:
-            p.getBodyInfo(body_id, physicsClientId=self._pb_id)
+            pybullet.getBodyInfo(body_id, physicsClientId=self._pb_id)
         except Exception:
             exist = False
         return exist

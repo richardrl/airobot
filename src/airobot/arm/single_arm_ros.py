@@ -28,7 +28,7 @@ class SingleArmROS(SingleArmReal):
     A class for single arms with ROS-related functions.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         moveit_planner (str): motion planning algorithm.
         eetool_cfg (dict): arguments to pass in the constructor
             of the end effector tool class.
@@ -48,10 +48,10 @@ class SingleArmROS(SingleArmReal):
             being used for all motion planning requests.
     """
 
-    def __init__(self, cfgs,
+    def __init__(self, configs,
                  moveit_planner='RRTstarkConfigDefault',
                  eetool_cfg=None):
-        super(SingleArmROS, self).__init__(configs=cfgs, eetool_cfg=eetool_cfg)
+        super(SingleArmROS, self).__init__(configs=configs, eetool_cfg=eetool_cfg)
 
         self.moveit_planner = moveit_planner
         self._gazebo_sim = rospy.get_param('sim')

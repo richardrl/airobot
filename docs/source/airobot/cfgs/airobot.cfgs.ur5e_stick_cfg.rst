@@ -6,4 +6,4 @@ airobot.configs.ur5e\_stick\_cfg
     :undoc-members:
     :show-inheritance:
 
-.. literalinclude:: ../../../../src/airobot/cfgs/ur5e_stick_cfg.py
+.. literalinclude:: ../../../../src/airobot/configs/ur5e_stick_cfg.py
