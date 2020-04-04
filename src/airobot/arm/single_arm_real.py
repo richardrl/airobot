@@ -25,7 +25,7 @@ class SingleArmReal(ARM):
     and do not depend on ROS.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         eetool_cfg (dict): arguments to pass in the constructor
             of the end effector tool class.
 
@@ -36,9 +36,9 @@ class SingleArmReal(ARM):
         ee_link (str): Name of the arms end-effector link.
     """
 
-    def __init__(self, cfgs,
+    def __init__(self, configs,
                  eetool_cfg=None):
-        super(SingleArmReal, self).__init__(configs=cfgs, eetool_cfg=eetool_cfg)
+        super(SingleArmReal, self).__init__(configs=configs, eetool_cfg=eetool_cfg)
 
         self._init_real_consts()
 

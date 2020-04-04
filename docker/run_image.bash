@@ -1,8 +1,8 @@
 IMAGE=anthonysimeonov/airobot-cuda-dev:latest
 IMAGE=richardrl/airobot:latest
-IMAGE=richardrl/airobot-cuda9
+IMAGE=richardrl/airobot-cuda9:latest
 XAUTH=/tmp/.docker.xauth
-CAMERA_CALIB_DIR=$PWD/../../camera_calibration
+CAMERA_CALIB_DIR=/home/richard/improbable/forks/camera_calibration
 BANDU_CODE=/home/richard/improbable/forks/bandu_code
 GELSIGHT_DIR=/home/richard/improbable/forks/GelSight_Wedge
 if [ ! -f $XAUTH ]

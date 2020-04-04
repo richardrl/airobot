@@ -38,7 +38,7 @@ class UR5eReal(SingleArmROS):
     A Class for interfacing with real UR5e robot.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         moveit_planner (str): motion planning algorithm.
         eetool_cfg (dict): arguments to pass in the constructor
             of the end effector tool class.
@@ -59,13 +59,13 @@ class UR5eReal(SingleArmROS):
             shape: :math:`[4,]` ([x, y, z, w]).
     """
 
-    def __init__(self, cfgs,
+    def __init__(self, configs,
                  moveit_planner='RRTstarkConfigDefault',
                  eetool_cfg=None,
                  wrist_cam=True,
                  rtde=False,
                  ):
-        super(UR5eReal, self).__init__(configs=cfgs,
+        super(UR5eReal, self).__init__(configs=configs,
                                        moveit_planner=moveit_planner,
                                        eetool_cfg=eetool_cfg)
         self._has_wrist_cam = wrist_cam
@@ -84,7 +84,7 @@ class UR5eReal(SingleArmROS):
 
         self._tcp_wrench_queue = deque([], 500) # Tool center point wrench
 
-        if self.cfgs['HAS_EETOOL'] and not rtde:
+        if self.configs['HAS_EETOOL'] and not rtde:
             rospy.Subscriber(self.configs.EETOOL.TCP_WRENCH_TOPIC,
                          WrenchStamped,
                          self._callback_tcp_wrench)

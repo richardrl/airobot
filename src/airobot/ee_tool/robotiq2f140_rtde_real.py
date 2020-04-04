@@ -9,6 +9,7 @@ from typing import Union, Tuple
 
 from collections import OrderedDict
 
+
 class Robotiq2F140RtdeReal:
     """
     Communicates with the gripper directly, via socket with string commands, leveraging string names for variables.
@@ -149,6 +150,7 @@ class Robotiq2F140RtdeReal:
 
         # wait for activation to go through
         while not self.is_active():
+            print("Attemping to activate gripper,,")
             time.sleep(0.001)
 
         # auto-calibrate position range if desired
@@ -279,8 +281,22 @@ class Robotiq2F140RtdeReal:
         final_obj = cur_obj
         return final_pos, Robotiq2F140RtdeReal.ObjectStatus(final_obj)
 
-    def open(self):
-        self.move_and_wait_for_pos(0, 255, 255)
+    def open(self, scale):
+        """
+        Open an increment
+        :return:
+        """
+        new_pos = self.get_current_position() - scale
+        print("Open " + str(new_pos))
+        self.move_and_wait_for_pos(new_pos, 255, 255)
 
-    def close(self):
-        self.move_and_wait_for_pos(255, 255, 255)
+    def close(self, scale):
+        """
+        Close an increment
+        :return:
+        """
+        new_pos = self.get_current_position() + scale
+        print("Close " + str(new_pos))
+
+        self.move_and_wait_for_pos(new_pos, 255, 255)
+

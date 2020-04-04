@@ -21,7 +21,7 @@ class CompliantYumiArm(SingleArmPybullet):
     specified to behave like springs.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         pb_client (BulletClient): pybullet client.
         seed (int): random seed.
         self_collision (bool): enable self_collision or
@@ -39,12 +39,12 @@ class CompliantYumiArm(SingleArmPybullet):
     """
 
     def __init__(self,
-                 cfgs,
+                 configs,
                  pb_client,
                  seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(CompliantYumiArm, self).__init__(configs=cfgs,
+        super(CompliantYumiArm, self).__init__(configs=configs,
                                                pb_client=pb_client,
                                                seed=seed,
                                                self_collision=self_collision,
@@ -252,7 +252,7 @@ class YumiPalmsPybullet(DualArmPybullet):
     grippers.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         pb_client (BulletClient): pybullet client.
         seed (int): random seed.
         self_collision (bool): enable self_collision or
@@ -268,21 +268,21 @@ class YumiPalmsPybullet(DualArmPybullet):
         right_arm (CompliantYumiArm): right arm interface.
     """
 
-    def __init__(self, cfgs, pb_client, seed=None,
+    def __init__(self, configs, pb_client, seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(YumiPalmsPybullet, self).__init__(configs=cfgs,
+        super(YumiPalmsPybullet, self).__init__(configs=configs,
                                                 pb_client=pb_client,
                                                 seed=seed,
                                                 self_collision=self_collision,
                                                 eetool_cfg=eetool_cfg)
-        right_cfg = cfgs.ARM.RIGHT
-        left_cfg = cfgs.ARM.LEFT
-        self.right_arm = CompliantYumiArm(cfgs=right_cfg,
+        right_cfg = configs.ARM.RIGHT
+        left_cfg = configs.ARM.LEFT
+        self.right_arm = CompliantYumiArm(configs=right_cfg,
                                           seed=seed,
                                           self_collision=self_collision,
                                           eetool_cfg=eetool_cfg)
-        self.left_arm = CompliantYumiArm(cfgs=left_cfg,
+        self.left_arm = CompliantYumiArm(configs=left_cfg,
                                          seed=seed,
                                          self_collision=self_collision,
                                          eetool_cfg=eetool_cfg)

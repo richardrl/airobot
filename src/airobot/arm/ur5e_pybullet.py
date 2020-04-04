@@ -16,7 +16,7 @@ class UR5ePybullet(SingleArmPybullet):
     of a UR5e robot with a robotiq 2f140 gripper.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm
+        configs (YACS CfgNode): configurations for the arm
         pb_client (BulletClient): pybullet client
         seed (int): random seed
         self_collision (bool): enable self_collision or
@@ -34,12 +34,12 @@ class UR5ePybullet(SingleArmPybullet):
     """
 
     def __init__(self,
-                 cfgs,
+                 configs,
                  pb_client,
                  seed=None,
                  self_collision=False,
                  eetool_cfg=None):
-        super(UR5ePybullet, self).__init__(configs=cfgs,
+        super(UR5ePybullet, self).__init__(configs=configs,
                                            pb_client=pb_client,
                                            seed=seed,
                                            self_collision=self_collision,

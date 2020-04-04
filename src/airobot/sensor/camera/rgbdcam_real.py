@@ -19,11 +19,11 @@ class RGBDCameraReal(RGBDCamera):
     Real RGBD camera.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the camera
+        configs (YACS CfgNode): configurations for the camera
         cam_name (str): camera name.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the end effector.
+        configs (YACS CfgNode): configurations for the end effector.
         img_height (int): height of the image.
         img_width (int): width of the image.
         cam_ext_mat (np.ndarray): extrinsic matrix (shape: :math:`[4, 4]`)
@@ -36,8 +36,8 @@ class RGBDCameraReal(RGBDCamera):
         depth_max (float): maximum depth value considered in 3D reconstruction.
     """
 
-    def __init__(self, cfgs, cam_name=None):
-        super(RGBDCameraReal, self).__init__(configs=cfgs)
+    def __init__(self, configs, cam_name=None):
+        super(RGBDCameraReal, self).__init__(configs=configs)
         self.depth_scale = self.configs.CAM.REAL.DEPTH_SCALE
         self.cam_int_mat = None
         self.img_height = None

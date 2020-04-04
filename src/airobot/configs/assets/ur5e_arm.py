@@ -31,7 +31,7 @@ _C.IK_ORIENTATION_TOLERANCE = 0.05
 _C.HOME_POSITION = [0, -1.66, -1.92, -1.12, 1.57, 0]
 _C.MAX_JOINT_ERROR = 0.01
 _C.MAX_JOINT_VEL_ERROR = 0.05
-_C.MAX_EE_POS_ERROR = 0.01
+_C.MAX_EE_POS_ERROR = 0.01 * .25
 # real part of the quaternion difference should be
 # greater than 1-error
 _C.MAX_EE_ORI_ERROR = 0.02

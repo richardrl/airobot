@@ -15,7 +15,7 @@ class DualArmPybullet(ARM):
     of a dual arm robot.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         pb_client (BulletClient): pybullet client.
         seed (int): random seed.
         self_collision (bool): enable self_collision or
@@ -24,7 +24,7 @@ class DualArmPybullet(ARM):
             of the end effector tool class.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the robot.
+        configs (YACS CfgNode): configurations for the robot.
         robot_id (int): pybullet body unique id of the robot.
         arms (dict): internal dictionary keyed by the names of each
             single arm, with values as interfaces to the arms.
@@ -43,11 +43,11 @@ class DualArmPybullet(ARM):
 
     """
 
-    def __init__(self, cfgs, pb_client, seed=None, self_collision=False,
+    def __init__(self, configs, pb_client, seed=None, self_collision=False,
                  eetool_cfg=None):
         self._self_collision = self_collision
         self._pb = pb_client
-        super(DualArmPybullet, self).__init__(configs=cfgs,
+        super(DualArmPybullet, self).__init__(configs=configs,
                                               eetool_cfg=eetool_cfg)
 
         self._np_random, _ = self._seed(seed)

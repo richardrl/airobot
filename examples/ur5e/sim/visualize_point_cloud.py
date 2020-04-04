@@ -17,16 +17,21 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
+# def body_names_to_idx(bullet_client):
+#
+#     bullet_client.getNumBodies()
+
+
 def main():
     """
     Visualize the point cloud from the RGBD camera.
     """
-    robot = Robot('ur5e')
+    robot = Robot('ur5e_2f140')
     robot.arm.go_home()
     robot.cam.setup_camera(focus_pt=robot.arm.robot_base_pos,
-                           dist=3,
+                           dist=2,
                            yaw=55,
-                           pitch=-30,
+                           pitch=-60,
                            roll=0)
     depth_max = 5.0
     vis = open3d.visualization.Visualizer()
@@ -45,7 +50,7 @@ def main():
                                         depth_max=depth_max)
         pcd.points = open3d.utility.Vector3dVector(pts)
         pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
-        vis.update_geometry()
+        vis.update_geometry(pcd)
         vis.poll_events()
         vis.update_renderer()
         time.sleep(0.1)

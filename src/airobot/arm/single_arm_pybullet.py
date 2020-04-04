@@ -17,7 +17,7 @@ class SingleArmPybullet(ARM):
     Base class for a single arm simulated in pybullet.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         pb_client (BulletClient): pybullet client.
         seed (int): random seed.
         self_collision (bool): enable self_collision or
@@ -26,7 +26,7 @@ class SingleArmPybullet(ARM):
             of the end effector tool class.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the arm.
+        configs (YACS CfgNode): configurations for the arm.
         robot_id (int): pybullet body unique id of the robot.
         arm_jnt_names (list): names of the arm joints.
         arm_dof (int): degrees of freedom of the arm.
@@ -42,14 +42,14 @@ class SingleArmPybullet(ARM):
     """
 
     def __init__(self,
-                 cfgs,
+                 configs,
                  pb_client,
                  seed=None,
                  self_collision=False,
                  eetool_cfg=None):
         self._self_collision = self_collision
         self._pb = pb_client
-        super(SingleArmPybullet, self).__init__(configs=cfgs,
+        super(SingleArmPybullet, self).__init__(configs=configs,
                                                 eetool_cfg=eetool_cfg)
         self.robot_id = None
         self._np_random, _ = self._seed(seed)

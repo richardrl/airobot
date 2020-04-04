@@ -71,9 +71,9 @@ class Robot:
             eetool_cfg = {}
 
         root_path = os.path.dirname(os.path.realpath(__file__))
-        cfgs_root_path = os.path.join(root_path, 'configs')
+        configs_root_path = os.path.join(root_path, 'configs')
         robot_pool = []
-        for f in os.listdir(cfgs_root_path):
+        for f in os.listdir(configs_root_path):
             if f.endswith('_cfg.py'):
                 robot_pool.append(f[:-len('_cfg.py')])
 

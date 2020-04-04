@@ -4,7 +4,7 @@ import numpy as np
 from airobot import Robot
 from airobot import log_warn
 from airobot.utils.common import euler2quat
-
+import open3d
 
 def main():
     """
@@ -16,6 +16,11 @@ def main():
     if not success:
         log_warn('Robot go_home failed!!!')
     ori = euler2quat([0, 0, np.pi / 2])
+
+    robot.pb_client.removeBody(0)
+    robot.pb_client.removeBody(1)
+
+
     robot.pb_client.load_urdf('table/table.urdf',
                               [.5, 0, 0.4],
                               ori,
@@ -30,6 +35,34 @@ def main():
                                         mass=1,
                                         base_pos=[0.3, 0.12, 1.0],
                                         rgba=[0, 0, 1, 1])
+
+    robot.cam.setup_camera(focus_pt=robot.arm.robot_base_pos,
+                           dist=1.7,
+                           yaw=55,
+                           pitch=-100, #-30 original
+                           roll=0)
+    depth_max = 2.5
+    vis = open3d.visualization.Visualizer()
+    vis.create_window("Point Cloud")
+
+    pcd = open3d.geometry.PointCloud()
+    pts, colors = robot.cam.get_pcd(in_world=True,
+                                    filter_depth=True,
+                                    depth_max=depth_max)
+    pcd.points = open3d.utility.Vector3dVector(pts)
+    pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
+    vis.add_geometry(pcd)
+    while True:
+        pts, colors = robot.cam.get_pcd(in_world=True,
+                                        filter_depth=True,
+                                        depth_max=depth_max)
+        pcd.points = open3d.utility.Vector3dVector(pts)
+        pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
+        vis.update_geometry(pcd)
+        vis.poll_events()
+        vis.update_renderer()
+        time.sleep(0.1)
+
     robot.arm.eetool.open()
     obj_pos = robot.pb_client.get_body_state(box_id1)[0]
     move_dir = obj_pos - robot.arm.get_ee_pose()[0]

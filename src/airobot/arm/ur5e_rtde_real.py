@@ -109,9 +109,9 @@ class UR5eRtdeReal:
         Set cartesian space pose of end effector.
 
         Args:
-            pos (list or np.ndarray): Desired x, y, z positions in the robot's
+            pos (np.ndarray): Desired x, y, z positions in the robot's
                 base frame to move to (shape: :math:`[3,]`).
-            ori (list or np.ndarray, optional): It can be euler angles
+            ori (np.ndarray, optional): It can be euler angles
                 ([roll, pitch, yaw], shape: :math:`[4,]`),
                 or quaternion ([qx, qy, qz, qw], shape: :math:`[4,]`),
                 or rotation matrix (shape: :math:`[3, 3]`). If it's None,
@@ -155,6 +155,18 @@ class UR5eRtdeReal:
         print("RTDE MOVEL SUCCESS")
         return success
 
+    def rotate_z(self, delta_z):
+        """
+
+        :param delta_z: Change from current z-rotation in radians
+        :return:
+        """
+        print("Rotate Delta Z " + str(delta_z))
+        relative_rot = [0, 0, delta_z]
+        current_pos, current_quat, _, _ = self.get_ee_pose()
+        relative_quat = arutil.to_quat(relative_rot)
+        self.set_ee_pose(pos=current_pos, ori=arutil.quat_multiply(relative_quat, current_quat))
+
     def move_ee_xyz(self, delta_xyz, eef_step=0.005, wait=True,
                     *args, **kwargs):
         """
@@ -172,6 +184,7 @@ class UR5eRtdeReal:
         Returns:
             bool: True if robot successfully reached the goal pose.
         """
+        print("Move Delta XYZ " + str(delta_xyz))
         ee_pos, ee_quat, ee_rot_mat, ee_euler = self.get_ee_pose()
 
         ee_pos[0] += delta_xyz[0]
@@ -180,6 +193,15 @@ class UR5eRtdeReal:
         success = self.set_ee_pose(ee_pos, ee_euler, wait=wait,
                                    ik_first=False)
         return success
+
+    def speed_ee_xyz(self, delta_xyz, eef_step=0.005):
+        print("Delta XYZ" + str(delta_xyz))
+
+        assert type(delta_xyz) is list
+        xd = delta_xyz + [0.0,0.0,0.0]
+        self.rtde_c.speedL(xd)
+        return True
+
 
     def go_home(self):
         """

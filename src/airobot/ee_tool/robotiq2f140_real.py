@@ -21,17 +21,17 @@ class Robotiq2F140Real(EndEffectorTool):
     is either through ROS over through a TCP/IP socket.
 
     Args:
-        cfgs (YACS CfgNode): configurations for the gripper.
+        configs (YACS CfgNode): configurations for the gripper.
 
     Attributes:
-        cfgs (YACS CfgNode): configurations for the gripper.
+        configs (YACS CfgNode): configurations for the gripper.
         jnt_names (list): list of joint names of the gripper.
     """
 
     def __init__(self,
-                 cfgs,
+                 configs,
                  rtde=True):
-        super(Robotiq2F140Real, self).__init__(configs=cfgs)
+        super(Robotiq2F140Real, self).__init__(configs=configs)
         self.jnt_names = [
             'finger_joint', 'left_inner_knuckle_joint',
             'left_inner_finger_joint', 'right_outer_knuckle_joint',
