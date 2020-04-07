@@ -75,9 +75,9 @@ class Robotiq2F140Pybullet(EndEffectorTool):
         if not self._mthread_started:
             self._mthread_started = True
             # gripper thread
-            self._th_gripper = threading.Thread(target=self._th_mimic_gripper)
-            self._th_gripper.daemon = True
-            self._th_gripper.start()
+            # self._th_gripper = threading.Thread(target=self._th_mimic_gripper)
+            # self._th_gripper.daemon = True
+            # self._th_gripper.start()
         else:
             return
 
@@ -130,6 +130,13 @@ class Robotiq2F140Pybullet(EndEffectorTool):
                                        self._pb.POSITION_CONTROL,
                                        targetPosition=tgt_pos,
                                        force=self._max_torque)
+        # time.sleep(0.005)
+        self._set_rest_joints(tgt_pos)
+        # self._pb.setJointMotorControl2(self.robot_id,
+        #                                self.jnt_to_id["right_outer_knuckle_joint"],
+        #                                self._pb.POSITION_CONTROL,
+        #                                targetPosition=-tgt_pos,
+        #                                force=self._max_torque)
         if not self._pb.in_realtime_mode():
             self._set_rest_joints(tgt_pos)
 

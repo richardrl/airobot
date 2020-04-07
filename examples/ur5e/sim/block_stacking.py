@@ -17,8 +17,8 @@ def main():
         log_warn('Robot go_home failed!!!')
     ori = euler2quat([0, 0, np.pi / 2])
 
-    robot.pb_client.removeBody(0)
-    robot.pb_client.removeBody(1)
+    # robot.pb_client.removeBody(0)
+    # robot.pb_client.removeBody(1)
 
 
     robot.pb_client.load_urdf('table/table.urdf',
@@ -49,19 +49,19 @@ def main():
     pts, colors = robot.cam.get_pcd(in_world=True,
                                     filter_depth=True,
                                     depth_max=depth_max)
-    pcd.points = open3d.utility.Vector3dVector(pts)
-    pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
-    vis.add_geometry(pcd)
-    while True:
-        pts, colors = robot.cam.get_pcd(in_world=True,
-                                        filter_depth=True,
-                                        depth_max=depth_max)
-        pcd.points = open3d.utility.Vector3dVector(pts)
-        pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
-        vis.update_geometry(pcd)
-        vis.poll_events()
-        vis.update_renderer()
-        time.sleep(0.1)
+    # pcd.points = open3d.utility.Vector3dVector(pts)
+    # pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
+    # vis.add_geometry(pcd)
+    # while True:
+    #     pts, colors = robot.cam.get_pcd(in_world=True,
+    #                                     filter_depth=True,
+    #                                     depth_max=depth_max)
+    #     pcd.points = open3d.utility.Vector3dVector(pts)
+    #     pcd.colors = open3d.utility.Vector3dVector(colors / 255.0)
+    #     vis.update_geometry(pcd)
+    #     vis.poll_events()
+    #     vis.update_renderer()
+    #     time.sleep(0.1)
 
     robot.arm.eetool.open()
     obj_pos = robot.pb_client.get_body_state(box_id1)[0]

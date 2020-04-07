@@ -6,6 +6,7 @@ _C.OPEN_ANGLE = 0.0
 # joint angle when the gripper is fully closed
 _C.CLOSE_ANGLE = 0.7
 
+
 # default host and port for socket used to
 # communicate with the gripper through the
 # UR controller
