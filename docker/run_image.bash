@@ -2,9 +2,9 @@ IMAGE=anthonysimeonov/airobot-cuda-dev:latest
 IMAGE=richardrl/airobot:latest
 IMAGE=richardrl/airobot-cuda9:latest
 XAUTH=/tmp/.docker.xauth
-CAMERA_CALIB_DIR=/home/richard/improbable/forks/camera_calibration
-BANDU_CODE=/home/richard/improbable/forks/bandu_code
-GELSIGHT_DIR=/home/richard/improbable/forks/GelSight_Wedge
+CAMERA_CALIB_DIR=/home/richard/improbable/camera_calibration
+BANDU_CODE=/home/richard/improbable/bandu_code
+GELSIGHT_DIR=/home/richard/improbable/GelSight_Wedge
 if [ ! -f $XAUTH ]
 then
     xauth_list=$(xauth nlist :0 | sed -e 's/^..../ffff/')
@@ -29,7 +29,7 @@ docker run -it \
     --volume="$GELSIGHT_DIR/:/root/catkin_ws/src/Gelsight_Wedge/" \
     --volume="$PWD/../:/home/improbable/airobot/" \
     --volume="$TRACKING_DIR/../:/home/improbable/tracking/" \
-    --volume="$BANDU_CODE/:/home/improbable/bandu" \
+    --volume="$BANDU_CODE/:/home/improbable/bandu_code" \
     --privileged \
     --runtime=nvidia \
     --net=host \
